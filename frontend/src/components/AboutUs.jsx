@@ -15,10 +15,10 @@ const AboutUs = () => {
         </h2>
 
         <h3 className="font-josefin absolute top-70 left-44 text-white text-4xl z-20">
-          WELCOME TO MAGNOLIA KITCHEN Richmond, VA.
+          WELCOME TO MAGNOLIA KITCHEN RICHMOND, VA.
         </h3>
 
-        <p className="font-josefin absolute top-100 left-44 right-44 text-white text-3xl z-20">
+        <p className="font-josefin absolute top-100 text-center left-44 right-44 text-white text-3xl z-20">
           Where we strive to craft desserts that are delicious yet wholesome. We
           take pride in using real ingredients, flowers to decorate, and of
           course fruits.

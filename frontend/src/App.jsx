@@ -1,15 +1,18 @@
 import "./App.css";
-import { Home, Layout } from "./pages/";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Home, Layout, Portfolio, Menu } from "./pages/";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
 function App() {
   return (
-    <Router>
-      <Home>
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </Home>
-    </Router>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="home" element={<Home />} />
+          <Route path="menu" element={<Menu />} />
+          <Route path="portfolio" element={<Portfolio />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

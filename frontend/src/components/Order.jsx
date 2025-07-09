@@ -66,7 +66,7 @@ const Order = () => {
                 transition={{ duration: 2, repeat: Infinity }}
                 d="M7.99988 489C7.99988 489 -12.0001 338 39.4999 279C90.9999 220 298 314 229.5 220C161 126 222.75 53.75 229.5 8.49997M229.5 8.49997C246 -13.5 148 59.5003 148 59.5003L229.5 8.49997ZM229.5 8.49997L287.5 69"
                 stroke="white"
-                stroke-width="100"
+                strokeWidth="7"
               />
             </svg>
           </div>
@@ -150,7 +150,7 @@ const Order = () => {
                 transition={{ duration: 2, repeat: Infinity }}
                 d="M8.00069 434.5C-34.913 300.219 285.673 330.519 145.456 270.5C5.23999 210.481 239.51 6 239.51 6M239.51 6L150.192 53.0961M239.51 6L239.511 88.1922"
                 stroke="white"
-                stroke-width="7"
+                strokeWidth="7"
               />
             </svg>
           </div>

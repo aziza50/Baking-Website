@@ -2,10 +2,11 @@ import React from "react";
 import MKLogo from "/images/MKLogo.png";
 import FacebookLogo from "/images/facebookLogo.png";
 import InstaLogo from "/images/insta.webp";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#74070E] mx-auto mt-12 max-w-7xl mb-20 rounded-2xl px-10 py-12 flex flex-col md:flex-row items-center justify-between gap-12 relative">
+    <footer className="bg-[#74070E] mx-auto max-w-7xl mb-20 rounded-2xl px-10 py-12 flex flex-col md:flex-row items-center justify-between gap-12 ">
       <div className="flex flex-col gap-4 md:ml-10 text-center md:text-left">
         <h3 className="font-bold font-josefin text-4xl text-white">Contact</h3>
         <p className="font-light font-josefin text-2xl text-white">
@@ -33,9 +34,24 @@ const Footer = () => {
 
       <div className="flex flex-col gap-4 md:mr-10 text-center md:text-right">
         <h3 className="font-bold font-crimson text-4xl text-white">Navigate</h3>
-        <p className="font-light font-josefin text-2xl text-white">Home</p>
-        <p className="font-light font-josefin text-2xl text-white">Menu</p>
-        <p className="font-light font-josefin text-2xl text-white">Portfolio</p>
+        <Link
+          to="/home"
+          className="font-light font-josefin text-2xl text-white"
+        >
+          Home
+        </Link>
+        <Link
+          to="/menu"
+          className="font-light font-josefin text-2xl text-white"
+        >
+          Menu
+        </Link>
+        <Link
+          to="/portfolio"
+          className="font-light font-josefin text-2xl text-white"
+        >
+          Portfolio
+        </Link>
       </div>
     </footer>
   );
