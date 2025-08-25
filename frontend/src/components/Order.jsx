@@ -11,7 +11,16 @@ const Order = () => {
     setResult("Sending...");
     const formData = new FormData(event.target);
 
-    formData.append("access_key", "77a3c1e2-62f6-4451-9278-bd96a6d0d5e9");
+    if (
+      !formData.get("date") ||
+      !formData.get("request") ||
+      !formData.get("name") ||
+      !formData.get("email")
+    ) {
+      setResult("Please fill in all required fields.");
+      return;
+    }
+    formData.append("access_key", "2f77d379-1504-4093-9918-e73dfa5ee8df");
 
     const response = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
@@ -36,7 +45,7 @@ const Order = () => {
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
         <h2 className="font-dawn absolute top-10 left-1/2 -translate-x-1/2 text-white text-9xl z-30">
-          Order
+          Order Now
         </h2>
 
         <img
@@ -49,7 +58,7 @@ const Order = () => {
 
         <div className="absolute inset-0 flex flex-row justify-center items-center z-30 px-10">
           <div className="flex flex-col items-center mr-10">
-            <div className="font-dawn font-light text-white text-3xl mb-4">
+            <div className="font-dawn font-light text-white text-5xl mb-4">
               Note: we only accept cash or venmo!
             </div>
             <svg
@@ -132,7 +141,7 @@ const Order = () => {
           </form>
 
           <div className="flex flex-col items-center ml-10">
-            <div className="font-dawn font-light text-white text-3xl mb-4">
+            <div className="font-dawn font-light text-white text-5xl mb-4">
               24-hour notice required!
             </div>
 

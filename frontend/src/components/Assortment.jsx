@@ -1,8 +1,4 @@
 import React from "react";
-import CakeImage from "/images/cakes.jpg";
-import NumberCakes from "/images/numberCakes.jpg";
-import Gathering from "/images/gatherings.jpg";
-import Sourdough from "/images/sourdough.jpg";
 const Assortment = () => {
   return (
     <div className="flex items-start justify-center gap-40 mt-40 max-w-[1200px] mx-auto">
@@ -16,7 +12,7 @@ const Assortment = () => {
       <div className="grid grid-cols-2 gap-30">
         <div className="relative w-72 h-72 flex items-center justify-center hover:scale-110 transition-transform duration-300">
           <img
-            src={CakeImage}
+            src="https://folioimagess.s3.us-east-1.amazonaws.com/public/good25.jpg"
             className="w-72 h-72 object-cover rounded-full"
           />
           <svg viewBox="0 0 300 300" className="absolute w-100 h-100">
@@ -37,7 +33,7 @@ const Assortment = () => {
 
         <div className="relative w-72 h-72 flex items-center justify-center hover:scale-110 transition-transform duration-300">
           <img
-            src={NumberCakes}
+            src="https://folioimagess.s3.us-east-1.amazonaws.com/public/good20.jpg"
             className="w-72 h-72 object-cover rounded-full"
           />
           <svg viewBox="0 0 300 300" className="absolute w-100 h-100">
@@ -58,7 +54,7 @@ const Assortment = () => {
 
         <div className="relative w-72 h-72 flex items-center justify-center hover:scale-110 transition-transform duration-300">
           <img
-            src={Sourdough}
+            src="https://folioimagess.s3.us-east-1.amazonaws.com/public/homepageImage3.jpg"
             alt="Cake"
             className="w-72 h-72 object-cover rounded-full"
           />
@@ -80,7 +76,7 @@ const Assortment = () => {
 
         <div className="relative w-72 h-72 flex items-center justify-center hover:scale-110 transition-transform duration-300">
           <img
-            src={Gathering}
+            src="https://folioimagess.s3.us-east-1.amazonaws.com/public/homepageImage2.jpg"
             className="w-72 h-72 object-cover rounded-full"
           />
           <svg viewBox="0 0 300 300" className="absolute w-100 h-100">

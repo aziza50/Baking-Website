@@ -8,7 +8,6 @@ const AboutUs = () => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        viewport={{ once: true }}
       >
         <h2 className="font-dawn absolute top-15 left-1/2 -translate-x-1/2 text-white text-9xl z-20">
           About Us
