@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import raspberryBackground from "/images/raspberryBackground.jpg";
 const MenuItems = () => {
   const [position, setPosition] = useState([0, 1, 2, 3]);
 
@@ -68,11 +69,11 @@ const MenuItems = () => {
             <div className="absolute inset-0 rounded-[30px] overflow-hidden flex flex-row gap-5 justify-center items-center p-6">
               <img
                 className="w-1/2 h-full object-cover"
-                src={baseURL + "good18.jpg"}
+                src={baseURL + "good49.jpg"}
               />
               <img
                 className="w-1/2 h-full object-cover"
-                src={baseURL + "good45.jpg"}
+                src={baseURL + "good50.jpg"}
               />
             </div>
           </div>
@@ -113,9 +114,9 @@ const MenuItems = () => {
                   layers of puffed pastry filled with pastry cream.
                 </p>
                 <div className="text-center flex flex-col font-semibold">
-                  <p>8 in ..... $70</p>
-                  <p>10 in ..... $90</p>
-                  <p>12 in ...... $120</p>
+                  <p>6 in ..... $70</p>
+                  <p>8 in ..... $90</p>
+                  <p>10 in ...... $120</p>
                 </div>
                 <p className="text-center">W/ fillings +$15</p>
               </div>
@@ -195,6 +196,46 @@ const MenuItems = () => {
             </p>
           </div>
         </div>
+      </div>
+
+      <div className="relative mx-auto my-30 max-w-7xl min-h-[900px] rounded-2xl overflow-hidden">
+        <div className="absolute text-white font-josefin flex flex-col justify-center text-center z-20">
+          <div>
+            <p>
+              VANILLA CAKE All time classic fluffy, moist vanilla sponge cake
+              layered with creamy vanilla cream cheese frosting CARROT CAKE Warm
+              spices, carrot, chopped pecans in a moist sponge cake layered with
+              creamy vanilla cream cheese frosting CHOCO-PEANUT CAKE  Layers of
+              soft and fudgy brownie-like chocolate cake with silky and creamy
+              peanut butter frosting topped with chocolate ganache RED VELVET
+              Red velvet cake layers with cream cheese buttercream frosting
+              CARAMEL LATTE Vanilla sponge cake, whipped cream coffee ganache,
+              soft caramel, caramel cream cheese frosting CARROT CAKE Warm
+              spices, carrot, chopped pecans in a moist sponge cake layered with
+              creamy vanilla cream cheese frosting HUMMINGBIRD CAKE Delicious
+              and flavorful with tropical notes of ripe mashed bananas, crushed
+              pineapple and chopped pecans and walnuts
+            </p>
+          </div>
+
+          <div>
+            <p>
+              Also known as Merengue Rouldade, this pavlova desserts is layered
+              with mascarpone whipped cream and berries. Crispy on the outside
+              and soft, marshmallowy on the inside. *gluten free
+            </p>
+          </div>
+        </div>
+
+        {/* Image */}
+        <img
+          src={raspberryBackground}
+          className="w-full h-auto object-cover rounded-xl"
+          alt="About Us Background"
+        />
+
+        {/* Overlay */}
+        <div className="absolute inset-0 rounded-xl bg-[#74070E] opacity-80"></div>
       </div>
 
       <div className="relative mx-auto my-10 flex flex-col items-center justify-center min-h-[700px]">

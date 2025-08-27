@@ -82,7 +82,7 @@ const Order = () => {
 
           <form
             onSubmit={onSubmit}
-            className="mt-45 bg-white/90 backdrop-blur-md p-10 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-6"
+            className="text-white mt-45 bg-white/90 backdrop-blur-md p-10 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-6"
           >
             <h6 className="text-lg font-semibold font-crimson">Your Name</h6>
             <Input
