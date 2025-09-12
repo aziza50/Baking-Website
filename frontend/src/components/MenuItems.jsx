@@ -285,7 +285,7 @@ const MenuItems = () => {
         {/* Image */}
         <img
           src={raspberryBackground}
-          className="absolute w-full h-full object-cover rounded-xl"
+          className="absolute inset-0 h-full w-full object-cover rounded-xl"
           alt="About Us Background"
         />
 
@@ -396,7 +396,7 @@ const MenuItems = () => {
           <button onClick={handleNext}>next</button>
 
           <div className="flex flex-col">
-            <svg viewBox="0 0 300 300" className="w-200 h-200">
+            <svg viewBox="0 0 300 300" className="w-150 h-150">
               <svg
                 width="200"
                 height="200"
@@ -417,7 +417,7 @@ const MenuItems = () => {
               </defs>
               <text fill="#74070E" fontSize="30" className="font-dawn">
                 <textPath href="#circlePath" startOffset="10%">
-                  Specialty Cakes
+                  Parties & Celebrations
                 </textPath>
               </text>
             </svg>
@@ -427,33 +427,6 @@ const MenuItems = () => {
               <h4 className="font-dawn">$90</h4>
             </div>
           </div>
-        </div>
-        <div className="mt-[350px] ml-[100px]">
-          <svg viewBox="0 0 300 300" className="w-200 h-200">
-            <svg
-              width="200"
-              height="200"
-              viewBox="0 0 596 209"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <ellipse cx="59" cy="155" rx="59" ry="54" fill="#74070E" />
-              <ellipse cx="252.5" cy="130" rx="84.5" ry="79" fill="#74070E" />
-              <circle cx="491.5" cy="104.5" r="104.5" fill="#74070E" />
-            </svg>
-            <defs>
-              <path
-                id="circlePath"
-                d="M 150, 150 m -115, 0 a 115,115 0 1,1 230,0 a 115,115 0 1,1 -230,0"
-                fill="none"
-              />
-            </defs>
-            <text fill="#74070E" fontSize="35" className=" font-dawn">
-              <textPath href="#circlePath" startOffset="10%">
-                Signature Honey Cakes
-              </textPath>
-            </text>
-          </svg>
         </div>
       </div>
     </>
