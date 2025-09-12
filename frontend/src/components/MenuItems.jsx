@@ -198,39 +198,94 @@ const MenuItems = () => {
         </div>
       </div>
 
-      <div className="relative mx-auto my-30 max-w-7xl min-h-[900px] rounded-2xl overflow-hidden">
-        <div className="absolute text-white font-josefin flex flex-col justify-center text-center z-20">
-          <div>
-            <p>
-              VANILLA CAKE All time classic fluffy, moist vanilla sponge cake
-              layered with creamy vanilla cream cheese frosting CARROT CAKE Warm
-              spices, carrot, chopped pecans in a moist sponge cake layered with
-              creamy vanilla cream cheese frosting CHOCO-PEANUT CAKE  Layers of
-              soft and fudgy brownie-like chocolate cake with silky and creamy
-              peanut butter frosting topped with chocolate ganache RED VELVET
-              Red velvet cake layers with cream cheese buttercream frosting
-              CARAMEL LATTE Vanilla sponge cake, whipped cream coffee ganache,
-              soft caramel, caramel cream cheese frosting CARROT CAKE Warm
-              spices, carrot, chopped pecans in a moist sponge cake layered with
-              creamy vanilla cream cheese frosting HUMMINGBIRD CAKE Delicious
-              and flavorful with tropical notes of ripe mashed bananas, crushed
-              pineapple and chopped pecans and walnuts
-            </p>
+      <div className="relative mx-auto my-30 max-w-7xl min-h-[1000px] rounded-2xl overflow-hidden">
+        <div className="mx-15 gap-15 absolute mt-5 text-white font-josefin flex flex-row justify-center text-center z-20">
+          <div className="pt-15 flex-1 flex flex-col gap-10">
+            <h1 className="text-5xl lg:text-6xl font-dawn mb-[-15px]">
+              Cake Menu
+            </h1>
+            <h1 className="border-t-1 border-white" />
+            <div>
+              <h2 className="text-4xl lg:text-4xl  mb-4">VANILLA CAKE</h2>
+              <p className="lg:text-xl">
+                All time classic fluffy, moist vanilla sponge cake layered with
+                creamy vanilla cream cheese frosting
+              </p>
+            </div>
+            <div>
+              <h2 className="text-4xl lg:text-4xl  mb-4">CARROT CAKE</h2>
+              <p className="lg:text-xl">
+                Warm spices, carrot, chopped pecans in a moist sponge cake
+                layered with creamy vanilla cream cheese frosting
+              </p>
+            </div>
+            <div>
+              <h2 className="text-4xl lg:text-4xl mb-4">CHOCO-PEANUT CAKE</h2>
+              <p className="lg:text-xl">
+                Layers of soft and fudgy brownie-like chocolate cake with silky
+                and creamy peanut butter frosting topped with chocolate ganache
+              </p>
+            </div>
+            <div>
+              <h2 className="text-4xl lg:text-4xl mb-4">RED VELVET</h2>
+              <p className="lg:text-xl">
+                Red velvet cake layers with cream cheese buttercream frosting
+              </p>
+            </div>
+            <div>
+              <h2 className="text-4xl lg:text-4xl mb-4">CARAMEL LATTE</h2>
+              <p className="lg:text-xl">
+                Vanilla sponge cake, whipped cream coffee ganache, soft caramel,
+                caramel cream cheese frosting
+              </p>
+            </div>
           </div>
 
-          <div>
-            <p>
-              Also known as Merengue Rouldade, this pavlova desserts is layered
-              with mascarpone whipped cream and berries. Crispy on the outside
-              and soft, marshmallowy on the inside. *gluten free
-            </p>
+          <div className="pt-10 flex-1 flex flex-col gap-10">
+            <div>
+              <h2 className="text-4xl lg:text-4xl  mb-4">HUMMINGBIRD CAKE</h2>
+              <p className="lg:text-xl">
+                Delicious and flavorful with tropical notes of ripe mashed
+                bananas, crushed pineapple and chopped pecans and walnuts
+              </p>
+            </div>
+            <div>
+              <h2 className="text-4xl lg:text-4xl mb-4">PAVLOVA CAKE</h2>
+              <p className="lg:text-xl">
+                Also known as Merengue Rouldade, this pavlova desserts is
+                layered with mascarpone whipped cream and berries. Crispy on the
+                outside and soft, marshmallowy on the inside.
+              </p>
+              <p className="text-sm italic">*gluten free</p>
+            </div>
+
+            <div className="mt-5 flex  lg:text-2xl flex-col gap-2">
+              <h1 className="text-4xl lg:text-6xl  font-dawn ">Filling</h1>
+              <h1 className="border-t-1 border-white mb-2" />
+              <p>STRAWBERRY COMPOTE</p>
+              <p>RASPBERRY CURD</p>
+              <p>LEMON CURD</p>
+              <p>PEACH FILLING</p>
+              <p>BLUEBERRY PUREE</p>
+              <p>SEASONAL FRUIT</p>
+            </div>
+
+            <div>
+              <h2 className="text-4xl lg:text-6xl  font-dawn mb-5">Toppings</h2>
+              <h1 className="border-t-1 border-white mb-5" />
+              <p className="lg:text-xl">
+                Highly customizable to your needs and wants. Reference portfolio
+                for ideas
+              </p>
+              <p className="lg:text-xl">*gluten free option available</p>
+            </div>
           </div>
         </div>
 
         {/* Image */}
         <img
           src={raspberryBackground}
-          className="w-full h-auto object-cover rounded-xl"
+          className="absolute w-full h-full object-cover rounded-xl"
           alt="About Us Background"
         />
 
