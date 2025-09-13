@@ -378,6 +378,55 @@ const MenuItems = () => {
           </div>
         </div>
       </div>
+      <div className="mt-30 relative">
+        <h1 className="text-[#74070E] font-dawn lg:text-8xl text-center mb-20">
+          Signature Number Cakes
+        </h1>
+
+        <div className="flex flex-col rounded-xl border border-[#74070E] max-w-[1200px] mx-auto p-10 relative z-10 bg-white">
+          <div className="flex flex-row text-center font-josefin justify-between items-start gap-12 mr-[400px]">
+            <div className="flex-1">
+              <h1 className="lg:text-6xl text-[#74070E] font-medium mb-[30px]">
+                One Digit
+              </h1>
+              <div className="lg:text-xl text-black flex flex-col gap-7">
+                <p>8'...$60</p>
+                <p>10'...$80</p>
+                <p>12'...$100</p>
+                <p>15'...$160</p>
+              </div>
+            </div>
+
+            <div className="flex-1">
+              <h1 className="mt-[50px] lg:text-6xl text-[#74070E] font-medium mb-[30px]">
+                Two Digit
+              </h1>
+              <div className="lg:text-xl text-black flex flex-col gap-7">
+                <p>$80</p>
+                <p>$120</p>
+                <p>$140</p>
+                <p>$280</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 text-left text-black font-josefin text-lg">
+            <p>
+              *Prices include seasonal berry and macarons topping, flower decor
+              is added separately.
+            </p>
+            <p>*Shapes are customizable!</p>
+          </div>
+        </div>
+
+        <div className="absolute top-[500px] right-[13%] transform -translate-y-1/2 z-20">
+          <img
+            className="w-[350px] h-auto rounded-xl object-cover shadow-lg"
+            src={baseURL + "good5.jpg"}
+            alt="Number Cake"
+          />
+        </div>
+      </div>
 
       <div className="flex flex-col justify-center ">
         <div className="mt-[400px] ml-[160px] flex gap-50 flex-row">

@@ -3,17 +3,18 @@ import { useState } from "react";
 import ReactPlayer from "react-player";
 
 const Images = () => {
-  const totalImages = 48;
+  const totalImages = 52;
   const baseURL = "https://folioimagess.s3.us-east-1.amazonaws.com/public/";
   const ImageURLS = Array.from(
     { length: totalImages },
     (_, i) => `${baseURL}good${i + 1}.jpg`
   );
-  const videoIndices = [5, 14, 29];
+  const videoIndices = [5, 14, 29, 52];
   const videoURLS = [
     `${baseURL}good5.mp4`,
     `${baseURL}good14.mp4`,
     `${baseURL}good29.mp4`,
+    `${baseURL}good53.mp4`,
   ];
   const [selectedIndex, setSelectedIndex] = useState(null);
   const boxStyle =
@@ -28,6 +29,7 @@ const Images = () => {
             className={`relative ${boxStyle} ${
               [
                 0, 19, 11, 5, 7, 18, 6, 12, 14, 26, 24, 31, 29, 36, 38, 47, 44,
+                50, 52, 51,
               ].includes(index)
                 ? "md:col-span-2 md:row-span-2"
                 : ""
@@ -42,6 +44,7 @@ const Images = () => {
           >
             {videoIndices.includes(index) ? (
               <video
+                className="w-full h-full object-cover"
                 src={videoURLS[videoIndices.indexOf(index)]}
                 autoPlay
                 muted
