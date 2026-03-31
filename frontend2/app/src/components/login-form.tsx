@@ -1,8 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
-
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -28,6 +27,7 @@ export function LoginForm({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const supabase = createClient();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,94 +48,111 @@ export function LoginForm({
       setIsLoading(false);
     }
   };
-
+  async function handleGoogleLogin() {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}`,
+        skipBrowserRedirect: false,
+      },
+    });
+  }
   return (
-    <div className={cn("flex flex-row gap-6", className)} {...props}>
-      <div className={"w-1/2 h-full"}>
-        <Image
-          src="/images/ice_cream.png"
-          alt="Ice Cream"
-          width={300}
-          height={300}
-        ></Image>
-        <Image
-          src="/images/jello.png"
-          alt="Jello"
-          width={300}
-          height={300}
-        ></Image>
-      </div>
+    <div className="flex flex-row items-center justify-center h-screen">
       <div>
         <h1
           className={`${dawn.className} text-[#74070E] flex justify item-center text-8xl`}
         >
           Welcome
         </h1>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Login</CardTitle>
-            <CardDescription>
-              Enter your email below to login to your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin}>
-              <div className="flex flex-col gap-6">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                    <Link
-                      href="/auth/forgot-password"
-                      className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </Link>
-                  </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Logging in..." : "Login"}
-                </Button>
-              </div>
-              <div className="mt-4 text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <Link
-                  href="/auth/sign-up"
-                  className="underline underline-offset-4"
+        <div className=" mt-10 w-full">
+          <Button
+            variant="magnolia"
+            className={cn(
+              "w-full mb-6",
+              crimson.className,
+              "text-2xl border-[#74070E]",
+            )}
+            onClick={handleGoogleLogin}
+          >
+            Log in with Google
+            <Image
+              src="/images/google.png"
+              alt="Google Icon"
+              width={20}
+              height={20}
+            ></Image>
+          </Button>
+          <h3
+            className={`${josefin.className} justify-content text-center text-[#74070E]`}
+          >
+            or
+          </h3>
+          <form onSubmit={handleLogin}>
+            <div className="flex flex-col gap-6">
+              <div className="grid gap-2">
+                <Label
+                  className={`${josefin.className} text-[#74070E]`}
+                  htmlFor="email"
                 >
-                  Sign up
-                </Link>
+                  email
+                </Label>
+                <Input
+                  className="bg-[#74070E] text-white"
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-      <div className={"w-1/2 h-full"}>
-        <Image
-          src="/images/cake.png"
-          alt="Cake"
-          width={300}
-          height={300}
-        ></Image>
-        <Image src="/images/pie.png" alt="Pie" width={300} height={300}></Image>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label
+                    className={`${josefin.className} text-[#74070E]`}
+                    htmlFor="password"
+                  >
+                    password
+                  </Label>
+                  <Link
+                    href="/auth/forgot-password"
+                    className={`text-sm ml-auto underline-offset-4 hover:underline text-[#74070E] ${josefin.className}`}
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  className="bg-[#74070E] text-white"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              {error && <p className="text-sm text-red-500">{error}</p>}
+              <Button
+                variant="magnolia"
+                type="submit"
+                disabled={isLoading}
+                className="w-1/2 mx-auto"
+              >
+                {isLoading ? "Logging in..." : "Login"}
+              </Button>
+            </div>
+            <div
+              className={`mt-4 text-center text-sm text-[#74070E] ${josefin.className}`}
+            >
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/auth/sign-up"
+                className="underline underline-offset-4"
+              >
+                Sign up
+              </Link>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
