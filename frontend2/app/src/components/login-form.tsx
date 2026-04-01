@@ -65,13 +65,13 @@ export function LoginForm({
         >
           Welcome
         </h1>
-        <div className=" mt-10 w-full">
+        <div className=" mt-10 w-full  ">
           <Button
             variant="magnolia"
             className={cn(
-              "w-full mb-6",
+              "p-4 mb-6",
               crimson.className,
-              "text-2xl border-[#74070E]",
+              "text-xl border-[#74070E] justify-center",
             )}
             onClick={handleGoogleLogin}
           >

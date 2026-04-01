@@ -4,7 +4,7 @@ import Image from "next/image";
 import { crimson } from "../styles/fonts";
 import { useRouter } from "next/navigation";
 import { ShoppingCart, User } from "lucide-react";
-import LogOut from "./logout";
+import LogOutButton from "./logout-button";
 import {
   Menubar,
   MenubarContent,
@@ -56,11 +56,11 @@ export default function Navbar(isAuthenticated: boolean = false) {
           Portfolio
         </Link>
       </nav>
-      <div className="gap-4 flex items-center">
-        <Menubar className="w-72">
+      <div className="flex items-center gap-x-4">
+        <Menubar className="w-72 border-none bg-transparent">
           <MenubarMenu>
             <MenubarTrigger>
-              <User />
+              <User color="white" strokeWidth={1} />
             </MenubarTrigger>
             <MenubarContent>
               <MenubarSub>
@@ -78,7 +78,7 @@ export default function Navbar(isAuthenticated: boolean = false) {
               </MenubarSub>
               <MenubarItem>
                 {isAuthenticated ? (
-                  "Logout"
+                  <LogOutButton />
                 ) : (
                   <Link href="/auth/login">Login</Link>
                 )}
@@ -88,7 +88,7 @@ export default function Navbar(isAuthenticated: boolean = false) {
           <MenubarMenu>
             <Link href="/cart">
               <MenubarTrigger>
-                <ShoppingCart />
+                <ShoppingCart color="white" strokeWidth={1} />
               </MenubarTrigger>
             </Link>
             <MenubarContent>

@@ -27,8 +27,8 @@ export default function Page() {
         <Image
           src="/images/ice_cream.png"
           alt="Ice Cream"
-          width={100}
-          height={100}
+          width={90}
+          height={90}
           style={{ transform: "rotate(-20deg)" }}
         ></Image>
         <Image
