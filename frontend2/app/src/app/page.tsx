@@ -6,8 +6,10 @@ import AboutUs from "../components/about-us";
 import Assortment from "../components/assortment";
 import Testimonials from "../components/testimonials";
 import { crimson, dawn, josefin } from "../styles/fonts";
+import testConnection from "./db/connect/sql";
 
 export default function Home() {
+  testConnection();
   return (
     <>
       <div className="relative z-10 px-4 sm:px-8">
