@@ -2,7 +2,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { crimson } from "../styles/fonts";
-import { useRouter } from "next/navigation";
 import { ShoppingCart, User } from "lucide-react";
 import LogOutButton from "./logout-button";
 import {
@@ -18,12 +17,15 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 
-export default function Navbar(isAuthenticated: boolean = false) {
-  const router = useRouter();
+export default function Navbar({
+  isAuthenticated = false,
+}: {
+  isAuthenticated?: boolean;
+}) {
   return (
-    <header className="fixed top-10 left-0 right-0 bg-[#74070E] mx-auto max-w-7xl rounded-[2rem] px-8 py-3 flex items-center justify-between z-50 opacity-200">
+    <header className="fixed top-10 left-0 right-0 bg-[#74070E] mx-auto max-w-7xl rounded-[2rem] px-8 py-3 grid grid-cols-[1fr_auto_1fr] items-center z-50 opacity-200">
       {/* Logo */}
-      <div className="shrink-0">
+      <div className="shrink-0 justify-self-start">
         <Link href="/">
           <Image
             src="/images/MKLogo.png"
@@ -36,7 +38,9 @@ export default function Navbar(isAuthenticated: boolean = false) {
       </div>
 
       {/* Nav Links */}
-      <nav className={`flex gap-x-8 text-white ${crimson.className} text-lg`}>
+      <nav
+        className={`justify-self-center flex gap-x-8 text-white ${crimson.className} text-lg`}
+      >
         <Link
           href="/"
           className="border-y-2 border-transparent hover:border-white px-1 duration-100"
@@ -44,7 +48,7 @@ export default function Navbar(isAuthenticated: boolean = false) {
           Home
         </Link>
         <Link
-          href="/menu"
+          href="/menu/collection"
           className="border-y-2 border-transparent hover:border-white px-1 duration-100"
         >
           Menu
@@ -56,8 +60,8 @@ export default function Navbar(isAuthenticated: boolean = false) {
           Portfolio
         </Link>
       </nav>
-      <div className="flex items-center gap-x-4">
-        <Menubar className="w-72 border-none bg-transparent">
+      <div className="justify-self-end flex items-center">
+        <Menubar className="border-none bg-transparent">
           <MenubarMenu>
             <MenubarTrigger>
               <User color="white" strokeWidth={1} />

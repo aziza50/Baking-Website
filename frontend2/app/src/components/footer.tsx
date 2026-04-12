@@ -61,7 +61,7 @@ export default function Footer() {
           Home
         </Link>
         <Link
-          href="/menu"
+          href="/menu/collection"
           className={`font-light ${josefin.className} text-2xl text-white`}
         >
           Menu

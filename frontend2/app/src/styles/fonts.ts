@@ -12,6 +12,7 @@ export const crimson = Crimson_Text({
 export const dawn = Dawning_of_a_New_Day({
   subsets: ["latin"],
   weight: ["400"],
+  adjustFontFallback: false,
 });
 
 export const josefin = Josefin_Slab({
