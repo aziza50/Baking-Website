@@ -6,7 +6,6 @@ import AboutUs from "../components/about-us";
 import Assortment from "../components/assortment";
 import Testimonials from "../components/testimonials";
 import { crimson, dawn, josefin } from "../styles/fonts";
-import testConnection from "./api/db/connect/test-proxy";
 
 export default function Home() {
   return (

@@ -1,13 +1,14 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import MenuItems from "@/components/menu-items";
 import Image from "next/image";
 import { crimson, dawn, josefin } from "@/styles/fonts";
 import Typerwriter from "typewriter-effect";
 import OrderNow from "@/components/order-now";
+import MenuClient from "@/components/menu-items";
 
 const page = () => {
-  
+
   return (
     <div>
       <div className="flex flex-col pt-20 lg:flex-row justify-center items-center gap-5 lg:gap-50 mb-30 lg:pt-40 relative">
