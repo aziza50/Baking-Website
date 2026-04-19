@@ -5,6 +5,7 @@ import Image from "next/image";
 import { crimson, dawn, josefin } from "@/styles/fonts";
 import Typerwriter from "typewriter-effect";
 import OrderNow from "@/components/order-now";
+import MenuClient from "@/components/menu-items";
 
 interface MenuItem {
   id: number;
@@ -15,24 +16,6 @@ interface MenuItem {
 }
 
 const page = () => {
-  const [menuItems, setMenuItems] = React.useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/menu");
-        console.log("API response status:", response.status);
-        const data = await response.json();
-        console.log("Menu data:", data);
-        setMenuItems(data);
-      } catch (error) {
-        console.error("Error fetching menu data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   return (
     <div>
       <div className="flex flex-col pt-20 lg:flex-row justify-center items-center gap-5 lg:gap-50 mb-30 lg:pt-40 relative">
