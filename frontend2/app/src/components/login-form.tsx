@@ -1,17 +1,9 @@
 "use client";
-
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
@@ -61,7 +53,7 @@ export function LoginForm({
     <div className="flex flex-row items-center justify-center h-screen">
       <div>
         <h1
-          className={`${dawn.className} text-[#74070E] flex justify item-center text-8xl`}
+          className={`${dawn.className} text-[#74070E] flex justify item-center text-center text-8xl`}
         >
           Welcome
         </h1>
@@ -69,7 +61,7 @@ export function LoginForm({
           <Button
             variant="magnolia"
             className={cn(
-              "p-4 mb-6",
+              "p-4 mb-6 w-full items-justify-center",
               crimson.className,
               "text-xl border-[#74070E] justify-center",
             )}

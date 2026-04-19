@@ -6,7 +6,6 @@ import AboutUs from "../components/about-us";
 import Assortment from "../components/assortment";
 import Testimonials from "../components/testimonials";
 import { crimson, dawn, josefin } from "../styles/fonts";
-import testConnection from "./api/db/connect/test-proxy";
 
 export default function Home() {
   return (
@@ -18,7 +17,7 @@ export default function Home() {
           MAGNOLIA KITCHEN
         </h1>
 
-        <div className="flex flex-col-reverse ml-[110px] sm:flex-row sm:gap-45 items-center">
+        <div className="flex flex-col-reverse ml-27.5 sm:flex-row sm:gap-45 items-center">
           <div className="w-full sm:w-1/2">
             <h2
               className={`text-2xl sm:text-4xl lg:text-[55px] ${dawn.className} text-start text-black mb-4`}

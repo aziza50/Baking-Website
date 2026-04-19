@@ -4,8 +4,27 @@ import { crimson, dawn, josefin } from "@/styles/fonts";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ArrowRight, ArrowLeft } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+interface MenuItem {
+  id: number;
+  name: string;
+  image_url: string;
+  description: string;
+  type: string;
+}
 
 const page = () => {
+  //get the specific menu item from the database
+  const [menuItem, setMenuItem] = React.useState<MenuItem | null>(null);
   const [position, setPosition] = useState<number[]>([0, 1, 2, 3]);
 
   const handleNext = () =>
@@ -93,13 +112,70 @@ const page = () => {
               >
                 <textPath href="#circlePath" startOffset="9%">
                   Vanilla Heart Cake
-                  <textPath href="#circlePath" startOffset="50%">
-                    3.5 inch
-                  </textPath>
+                  <textPath href="#circlePath" startOffset="50%"></textPath>
                 </textPath>
               </text>
             </svg>
           </div>
+          {/*Now Add options to select various menu item attributes/categories */}
+          {menuItem && (
+            <div key={menuItem.id}>
+              <h2>{menuItem.name}</h2>
+              <p>{menuItem.description}</p>
+              <Select>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select Size" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Size</SelectLabel>
+                    <SelectItem value="small">Small</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="large">Large</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <Select>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select Topping" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Topping</SelectLabel>
+                    <SelectItem value="cherry">Cherry</SelectItem>
+                    <SelectItem value="strawberry">Strawberry</SelectItem>
+                    <SelectItem value="blueberry">Blueberry</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <Select>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select Topping" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Flavor</SelectLabel>
+                    <SelectItem value="cherry">Cherry</SelectItem>
+                    <SelectItem value="strawberry">Strawberry</SelectItem>
+                    <SelectItem value="blueberry">Blueberry</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <Select>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select Topping" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Quantity</SelectLabel>
+                    <SelectItem value="cherry">Cherry</SelectItem>
+                    <SelectItem value="strawberry">Strawberry</SelectItem>
+                    <SelectItem value="blueberry">Blueberry</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
       </div>
 

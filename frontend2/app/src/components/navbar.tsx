@@ -16,12 +16,11 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import GetUserInfo from "@/components/get_user_info";
 
-export default function Navbar({
-  isAuthenticated = false,
-}: {
-  isAuthenticated?: boolean;
-}) {
+export default function Navbar() {
+  const userInfo = GetUserInfo();
+  const isAuthenticated = !!userInfo;
   return (
     <header className="fixed top-10 left-0 right-0 bg-[#74070E] mx-auto max-w-7xl rounded-[2rem] px-8 py-3 grid grid-cols-[1fr_auto_1fr] items-center z-50 opacity-200">
       {/* Logo */}
