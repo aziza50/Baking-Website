@@ -137,7 +137,7 @@ export default function Navbar() {
             </MenubarContent>
           </MenubarMenu>
           <MenubarMenu>
-            <Link href="/checkout/shopping_cart">
+            <Link href="/checkout/process">
               <MenubarTrigger>
                 <ShoppingCart color="white" strokeWidth={1} />
               </MenubarTrigger>
