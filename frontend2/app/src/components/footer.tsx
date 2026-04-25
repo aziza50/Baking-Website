@@ -41,9 +41,10 @@ export default function Footer() {
         <Image
           src="/images/MKLogo.png"
           alt="Magnolia Kitchen"
-          className="h-50 w-auto"
           width={200}
-          height={200}
+          height={225}
+          sizes="100vw"
+          style={{ width: "auto", height: "225px" }}
         />
         <p className={` text-white text-xs ${josefin.className}`}>
           © 2025 | All RIGHTS RESERVED

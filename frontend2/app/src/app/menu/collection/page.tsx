@@ -5,7 +5,6 @@ import Image from "next/image";
 import { crimson, dawn, josefin } from "@/styles/fonts";
 import Typerwriter from "typewriter-effect";
 import OrderNow from "@/components/order-now";
-import MenuClient from "@/components/menu-items";
 
 interface MenuItem {
   id: number;

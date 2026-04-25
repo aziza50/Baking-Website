@@ -1,5 +1,4 @@
 "use client";
-import GetUserInfo from "@/components/get_user_info";
 import { Button } from "@/components/ui/button";
 import { dawn, crimson } from "@/styles/fonts";
 import { useEffect, useState } from "react";
@@ -27,72 +26,137 @@ import {
   ComboboxValue,
   useComboboxAnchor,
 } from "@/components/ui/combobox";
-
+import { getAdditionalInfoByUserId, insertAdditionalInfo } from "./actions";
 const allergies = ["Dairy", "Nuts", "Gluten", "Eggs", "Soy"] as const;
 
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Form } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { updateAdditionalInfo } from "./actions";
 
-interface UserAdditionalInfo {
-  id: BinaryType;
+interface AuthUser {
+  id: string;
+  email: string;
+  created_at: string;
+}
+
+interface AdditionalInfo {
+  id: number;
   user_id: string;
+  display_name: string;
   allergies: string;
   phone_number: string;
 }
 
-const page = () => {
-  const userInfo = GetUserInfo();
+const Page = () => {
+  const [user, setUser] = useState<AuthUser | null>(null);
   const anchor = useComboboxAnchor();
-  const [additionalInfo, setAdditionalInfo] =
-    useState<UserAdditionalInfo | null>(null);
-  const profileItems = [{ id: 1, name: userInfo?.display_name }];
+  /* Fetch additional info for the user */
+  const [additionalInfo, setAdditionalInfo] = useState<AdditionalInfo | null>(
+    null,
+  );
+
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      const response = await fetch("/api/users/get-user-info", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: userInfo?.id }),
-      });
-      try {
-        const data = await response.json();
-        setAdditionalInfo(data);
-      } catch (error) {
-        console.error("Error fetching user info:", error);
+    const fetchUserById = async () => {
+      const supabase = createClient();
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser();
+
+      if (!authUser) {
+        setUser(null);
+        return;
       }
+
+      setUser({
+        id: authUser.id,
+        email: authUser.email || "",
+        created_at: authUser.created_at,
+      });
     };
-    fetchUserInfo();
+
+    fetchUserById();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const allergies = formData.getAll("allergies") as string[];
-    const phone_number = formData.get("phone_number") as string;
-    const newAdditionalInfo: UserAdditionalInfo = {
-      id: crypto.randomUUID() as unknown as BinaryType,
-      user_id: userInfo?.id || "",
-      allergies: allergies.join(","),
-      phone_number,
-    };
-    try {
-      const response = await fetch("/api/users/add-additional-info", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newAdditionalInfo),
-      });
-      if (response.ok) {
-        setAdditionalInfo(newAdditionalInfo);
-      } else {
-        console.error("Failed to add additional info");
+  useEffect(() => {
+    const fetchAdditionalInfo = async () => {
+      if (!user?.id) {
+        setAdditionalInfo(null);
+        return;
       }
-    } catch (error) {
-      console.error("Error adding additional info:", error);
+
+      const response = await getAdditionalInfoByUserId(user.id);
+      if (response) {
+        setAdditionalInfo(response);
+      }
+    };
+
+    fetchAdditionalInfo();
+  }, [user?.id]);
+
+  const profileItems = [{ id: 1, name: user?.email }];
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    //check to submit or update additional info!!!
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const allergyValues = formData.getAll("allergies");
+    let parsedAllergies = "";
+    const allergies = allergyValues.map((item) => {
+      const str = String(item);
+      parsedAllergies += str.trim() + ",";
+      return str.trim();
+    });
+    const phone_number = formData.get("phone_number") as string;
+    const display_name = formData.get("display_name") as string;
+    console.log(additionalInfo);
+    if (additionalInfo) {
+      const updatedInfo: AdditionalInfo = {
+        id: additionalInfo.id,
+        user_id: String(user?.id || ""),
+        display_name: String(display_name || ""),
+        allergies: String(parsedAllergies.slice(0, -1)),
+        phone_number: String(phone_number || ""),
+      };
+
+      try {
+        console.log("Updating additional info with payload:", updatedInfo);
+        const response = await updateAdditionalInfo(updatedInfo);
+        if (response.ok) {
+          setAdditionalInfo(updatedInfo);
+        } else {
+          console.error("Failed to update additional info");
+        }
+      } catch (error) {
+        console.error("Error updating additional info:", error);
+      }
+    } else {
+      const newAdditionalInfo = {
+        user_id: String(user?.id || ""),
+        display_name: String(display_name || ""),
+        allergies: String(parsedAllergies.slice(0, -1)),
+        phone_number: String(phone_number || ""),
+      };
+
+      // Log for debugging
+      console.log("Payload to send:", JSON.stringify(newAdditionalInfo));
+
+      try {
+        console.log("Inserting new additional info:", newAdditionalInfo);
+        const response = await insertAdditionalInfo(newAdditionalInfo);
+        if (response.ok) {
+          const refreshedAdditionalInfo = await getAdditionalInfoByUserId(
+            user?.id || "",
+          );
+          setAdditionalInfo(refreshedAdditionalInfo);
+        } else {
+          console.error("Failed to add additional info");
+        }
+      } catch (error) {
+        console.error("Error adding additional info:", error);
+      }
     }
   };
 
@@ -149,16 +213,16 @@ const page = () => {
               >
                 <p>No additional info found. Consider adding one below</p>
                 <Dialog>
-                  <form onSubmit={handleSubmit}>
-                    <DialogTrigger asChild>
-                      <Button
-                        className={`${dawn.className} text-xl border-[#74070E] justify-center`}
-                        variant="magnolia"
-                      >
-                        Add Additional Info
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-sm">
+                  <DialogTrigger asChild>
+                    <Button
+                      className={`${dawn.className} text-xl border-[#74070E] justify-center`}
+                      variant="magnolia"
+                    >
+                      Add Additional Info
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-sm">
+                    <form onSubmit={handleSubmit}>
                       <DialogHeader>
                         <DialogTitle>Edit Additional Info</DialogTitle>
                         <DialogDescription>
@@ -168,12 +232,16 @@ const page = () => {
                       </DialogHeader>
                       <FieldGroup>
                         <Field>
-                          <Label htmlFor="name-1">Phone Number</Label>
+                          <Label htmlFor="display_name">Name</Label>
+                          <Input id="display_name" name="display_name" />
+                        </Field>
+                        <Field>
+                          <Label htmlFor="phone-number">Phone Number</Label>
                           <Input
                             id="phone-number"
                             name="phone_number"
                             defaultValue="1234567890"
-                            type="number"
+                            type="tel"
                           />
                         </Field>
                         <Field>
@@ -183,6 +251,7 @@ const page = () => {
                             autoHighlight
                             items={allergies}
                             defaultValue={[allergies[0]]}
+                            name="allergies"
                           >
                             <ComboboxChips
                               ref={anchor}
@@ -220,8 +289,8 @@ const page = () => {
                         </DialogClose>
                         <Button type="submit">Save changes</Button>
                       </DialogFooter>
-                    </DialogContent>
-                  </form>
+                    </form>
+                  </DialogContent>
                 </Dialog>
               </div>
             )}
@@ -231,4 +300,4 @@ const page = () => {
     </div>
   );
 };
-export default page;
+export default Page;

@@ -2,7 +2,7 @@ import {
   Crimson_Text,
   Dawning_of_a_New_Day,
   Josefin_Slab,
-} from "@next/font/google";
+} from "next/font/google";
 
 export const crimson = Crimson_Text({
   subsets: ["latin"],
@@ -12,6 +12,8 @@ export const crimson = Crimson_Text({
 export const dawn = Dawning_of_a_New_Day({
   subsets: ["latin"],
   weight: ["400"],
+  display: "swap",
+  fallback: ["cursive", "sans-serif"],
   adjustFontFallback: false,
 });
 

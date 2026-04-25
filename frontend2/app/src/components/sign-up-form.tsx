@@ -1,22 +1,13 @@
 "use client";
-"use client";
-
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { crimson, dawn, josefin } from "@/styles/fonts";
+import { dawn, josefin } from "@/styles/fonts";
+import { addUser } from "@/services/users";
 
 export function SignUpForm({
   className,
@@ -50,7 +41,20 @@ export function SignUpForm({
         },
       });
       if (error) throw error;
-      router.push("/auth/sign-up-success");
+      //add user to database
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user && user.id && user.email) {
+        const response = await addUser({
+          id: user.id,
+          email: user.email,
+        });
+        if (!response.ok) {
+          throw new Error("Failed to add user to database");
+        }
+      }
+      router.push("/");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {

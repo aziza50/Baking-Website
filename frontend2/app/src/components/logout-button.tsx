@@ -9,8 +9,12 @@ export default function LogoutButton() {
   const logout = async () => {
     const supabase = createClient();
     try {
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw error;
+      }
       router.push("/auth/login");
+      router.refresh();
     } catch (error) {
       console.error("Error logging out:", error);
     }

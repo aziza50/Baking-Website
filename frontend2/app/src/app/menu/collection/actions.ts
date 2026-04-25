@@ -1,8 +1,11 @@
-import { NextResponse } from "next/server";
-
+"use server";
 import { pool } from "@/lib/gcp/db";
 
-export async function GET() {
+interface response {
+  ok: boolean;
+}
+
+export async function getCollection() {
   try {
     const connection = await pool;
 
@@ -12,13 +15,14 @@ export async function GET() {
 
     const [rows] = await connection.query("SELECT * FROM menu_item");
 
-    return NextResponse.json(rows, { status: 200 });
+    return { ok: true, data: rows };
   } catch (error: any) {
     console.error("Error:", error.message);
 
-    return NextResponse.json(
-      { error: "Failed to fetch menu items", details: error.message },
-      { status: 500 },
-    );
+    return {
+      ok: false,
+      error: "Failed to fetch menu items",
+      details: error.message,
+    };
   }
 }

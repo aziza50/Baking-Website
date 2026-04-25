@@ -46,7 +46,7 @@ export default function Testimonials() {
               thank my new build clients for their business 🩶🩶🩶. They were a
               huge hit! Cannot wait to see what #2025 brings.”
             </p>
-            <h5 className={` ${dawn.className} text-2xl text-black`}>
+            <h5 className={` ${dawn.className} text-2xl text-black mr-20`}>
               — Mandy
             </h5>
           </div>
@@ -82,7 +82,7 @@ export default function Testimonials() {
               it and that says a lot in itself 😍”
             </p>
             <h5
-              className={`mt-4 text-right ${dawn.className} text-2xl text-black`}
+              className={`mt-4 text-right ${dawn.className} text-2xl text-black mr-20`}
             >
               — Kim
             </h5>
