@@ -162,9 +162,6 @@ export default function MenuItems() {
 
             return (
               <motion.div
-                onClick={() => {
-                  router.push(`/menu/item/${item.id}`);
-                }}
                 key={item.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -177,7 +174,7 @@ export default function MenuItems() {
                       src="/images/cake.png"
                       alt={item.name}
                       fill
-                      className="object-cover rounded-lg"
+                      className="object-cover rounded-lg grayscale"
                     />
                   </div>
                 </div>
@@ -242,7 +239,7 @@ export default function MenuItems() {
                 transition={{ delay: index * 0.1 }}
                 className="flex flex-col items-center text-center"
               >
-                <div className="bg-white p-4 rounded-xl shadow-2xl mb-6 w-full max-w-[300px]">
+                <div className="cursor-pointer bg-white p-4 rounded-xl shadow-2xl mb-6 w-full max-w-[300px]">
                   <div className="relative aspect-[4/5] w-full">
                     <Image
                       src="/images/cake.png"
@@ -291,9 +288,6 @@ export default function MenuItems() {
 
             return (
               <motion.div
-                onClick={() => {
-                  router.push(`/menu/item/${item.id}`);
-                }}
                 key={item.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -371,7 +365,7 @@ export default function MenuItems() {
                 transition={{ delay: index * 0.1 }}
                 className="flex flex-col items-center text-center"
               >
-                <div className="bg-white p-4 rounded-xl shadow-2xl mb-6 w-full max-w-[300px]">
+                <div className="cursor-pointer bg-white p-4 rounded-xl shadow-2xl mb-6 w-full max-w-[300px]">
                   <div className="relative aspect-[4/5] w-full">
                     <Image
                       src="/images/cake.png"
@@ -419,9 +413,6 @@ export default function MenuItems() {
 
             return (
               <motion.div
-                onClick={() => {
-                  router.push(`/menu/item/${item.id}`);
-                }}
                 key={item.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
