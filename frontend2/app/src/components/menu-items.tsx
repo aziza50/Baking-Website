@@ -9,6 +9,7 @@ import { getVariant } from "@/app/menu/item/[item_id]/actions";
 interface MenuItem {
   id: number;
   name: string;
+  image_url: string;
   description: string;
   type: string;
   category: string;
@@ -23,6 +24,7 @@ interface MenuVariant {
 }
 
 export default function MenuItems() {
+  const baseUrl = process.env.NEXT_PUBLIC_S3_BASE_URL;
   const [items, setItems] = useState<MenuItem[]>([]);
   const [variants, setVariants] = useState<MenuVariant[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -116,7 +118,7 @@ export default function MenuItems() {
                 <div className="cursor-pointer bg-white p-4 rounded-xl shadow-2xl mb-6 w-full max-w-[300px]">
                   <div className="relative aspect-[4/5] w-full">
                     <Image
-                      src="/images/cake.png"
+                      src={baseUrl + item.image_url}
                       alt={item.name}
                       fill
                       className="object-cover rounded-lg"
@@ -174,7 +176,7 @@ export default function MenuItems() {
                 <div className="bg-gray-200 p-4 rounded-xl shadow-2xl mb-6 w-full max-w-[300px] opacity-50">
                   <div className="relative aspect-[4/5] w-full">
                     <Image
-                      src="/images/cake.png"
+                      src={baseUrl + item.image_url}
                       alt={item.name}
                       fill
                       className="object-cover rounded-lg"
@@ -245,7 +247,7 @@ export default function MenuItems() {
                 <div className="bg-white p-4 rounded-xl shadow-2xl mb-6 w-full max-w-[300px]">
                   <div className="relative aspect-[4/5] w-full">
                     <Image
-                      src="/images/cake.png"
+                      src={baseUrl + item.image_url}
                       alt={item.name}
                       fill
                       className="object-cover rounded-lg"
@@ -303,7 +305,7 @@ export default function MenuItems() {
                 <div className="bg-gray-200 p-4 rounded-xl shadow-2xl mb-6 w-full max-w-[300px] opacity-50">
                   <div className="relative aspect-[4/5] w-full">
                     <Image
-                      src="/images/cake.png"
+                      src={baseUrl + item.image_url}
                       alt={item.name}
                       fill
                       className="object-cover rounded-lg"
@@ -374,7 +376,7 @@ export default function MenuItems() {
                 <div className="bg-white p-4 rounded-xl shadow-2xl mb-6 w-full max-w-[300px]">
                   <div className="relative aspect-[4/5] w-full">
                     <Image
-                      src="/images/cake.png"
+                      src={baseUrl + item.image_url}
                       alt={item.name}
                       fill
                       className="object-cover rounded-lg"
@@ -431,7 +433,7 @@ export default function MenuItems() {
                 <div className="bg-gray-200 p-4 rounded-xl shadow-2xl mb-6 w-full max-w-[300px] opacity-50">
                   <div className="relative aspect-[4/5] w-full">
                     <Image
-                      src="/images/cake.png"
+                      src={baseUrl + item.image_url}
                       alt={item.name}
                       fill
                       className="object-cover rounded-lg"

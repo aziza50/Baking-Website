@@ -7,6 +7,7 @@ import { ShoppingCart, User } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { crimson } from "../styles/fonts";
 import LogOutButton from "./logout-button";
+import { ensureUserExists } from "@/services/users";
 import {
   Menubar,
   MenubarContent,
@@ -70,6 +71,21 @@ export default function Navbar() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  //Check if user exists in database, if not create a new user
+  useEffect(() => {
+    async function ensureUserInDatabase() {
+      if (!user) {
+        return;
+      }
+      const response = await ensureUserExists({
+        id: user.id,
+        email: user.email,
+      });
+      console.log("User ensured in database:", response);
+    }
+    ensureUserInDatabase();
+  }, [user]);
 
   if (loading) {
     return null;

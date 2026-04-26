@@ -1,3 +1,4 @@
+//https://github.com/sonnysangha/stripe-payment-elements-with-https-nextjs-14-demo referenced this tutorial!
 "use client";
 import {
   useStripe,
@@ -75,9 +76,16 @@ const CheckoutPage = ({ amount }: { amount: number }) => {
     <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4">
       {clientSecret ? <PaymentElement /> : <div>Loading payment form...</div>}
       {error && <div className="text-red-500 mt-4">{error}</div>}
-      <Button type="submit" disabled={!stripe || loading} className="mt-4">
-        {loading ? "Processing..." : "Pay Now"}
-      </Button>
+      <div className="flex justify-items-center justify-center">
+        <Button
+          type="submit"
+          variant="magnolia"
+          disabled={!stripe || loading}
+          className="mt-4"
+        >
+          {loading ? "Processing..." : "Pay Now"}
+        </Button>
+      </div>
     </form>
   );
 };
@@ -117,7 +125,9 @@ const Wrapper = ({ amount }: { amount: number }) => {
         clientSecret: clientSecret,
       }}
     >
-      <CheckoutPage amount={amount} />
+      <div className="max-w-lg">
+        <CheckoutPage amount={amount} />
+      </div>
     </Elements>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useEffect, use } from "react";
-import { crimson, dawn, josefin } from "@/styles/fonts";
+import React, { useState, useEffect } from "react";
+import { dawn, josefin } from "@/styles/fonts";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ArrowRight, ArrowLeft } from "lucide-react";
@@ -21,7 +21,9 @@ import {
 } from "@/components/ui/accordion";
 
 import {
+  addToCart,
   getMenuItemById,
+  getOrCreateCartId,
   getToppingsByMenuId,
   getVariantByItemId,
 } from "./actions";
@@ -31,10 +33,11 @@ import { getModificationsByMenuId } from "./actions";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { getIngredientsByVariantId } from "./actions";
+import { toast } from "sonner";
 interface MenuItem {
   id: number;
   name: string;
-  image_url: string;
+  image_url: string | null;
   description: string;
   type: string;
   category: string;
@@ -44,41 +47,107 @@ interface MenuItem {
 interface MenuVariant {
   id: number;
   menu_id: number;
-  shape: string;
+  shape: string | null;
   size: string;
-  cream: string;
-  filling: string;
-  layers: number;
-  count: number;
+  cream: string | null;
+  filling: string | null;
+  layers: number | null;
+  count: number | null;
   quantity: number;
-  feeds: number;
+  feeds: number | null;
   price: number;
-  availability: boolean;
+  availability: boolean | null;
+}
+
+interface Modification {
+  id: number;
+  menu_id: number;
+  categories: string;
+  price: number;
+}
+
+interface Topping {
+  id: number;
+  menu_id: number;
+  name: string;
+  description: string | null;
+  price: number;
+}
+
+interface Ingredient {
+  id: number;
+  ingredient_name: string;
 }
 
 const page = () => {
   //get the specific menu item from the database
   //get the menu variants for this item
   const params = useParams<{ item_id: string }>();
-  const itemId = Number(params.item_id);
+  const menu_id = Number(params.item_id);
   const [menuItem, setMenuItem] = React.useState<MenuItem | null>(null);
   const [position, setPosition] = useState<number[]>([0, 1, 2, 3]);
   const [variants, setVariants] = useState<MenuVariant[]>([]);
-  const [toppings, setToppings] = useState<{ id: number; name: string }[]>([]);
-  const [modifications, setModifications] = useState<
-    { id: number; name: string }[]
-  >([]);
-  const [ingredients, setIngredients] = useState<
-    { id: number; name: string }[]
-  >([]);
+  const [toppings, setToppings] = useState<Topping[]>([]);
+  const [modifications, setModifications] = useState<Modification[]>([]);
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
   const [selectedVariant, setSelectedVariant] = useState<MenuVariant | null>(
     null,
   );
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedShape, setSelectedShape] = useState<string | null>(null);
+  const [selectedFilling, setSelectedFilling] = useState<string | null>(null);
+  const [selectedToppingId, setSelectedToppingId] = useState<number | null>(
+    null,
+  );
+  const [selectedModificationId, setSelectedModificationId] = useState<
+    number | null
+  >(null);
+  const [quantity, setQuantity] = useState<number>(1);
+  const uniqueSizes = Array.from(
+    new Set(variants.map((variant) => variant.size)),
+  );
+  const uniqueFillings = Array.from(
+    new Set(variants.map((variant) => variant.filling)),
+  );
+  const uniqueShapes = Array.from(
+    new Set(variants.map((variant) => variant.shape)),
+  );
+
+  async function handleAddToCart(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!selectedVariant) return;
+
+    const cartId = await getOrCreateCartId();
+    if (!cartId) {
+      toast.error("Failed to create cart. Please try again.");
+      return;
+    }
+    const response = await addToCart(
+      cartId,
+      menu_id,
+      selectedVariant.id,
+      selectedToppingId,
+      selectedModificationId,
+      quantity,
+    );
+    if (response.ok) {
+      toast.success("Item added to cart!");
+    } else {
+      toast.error("Failed to add item to cart. Please try again.");
+    }
+  }
+
+  function getModifNameById(modifId: number | null): string {
+    if (!modifId) return "";
+    const modif = modifications.find((m) => m.id === modifId);
+    return modif ? modif.categories : "";
+  }
 
   useEffect(() => {
-    if (!Number.isFinite(itemId)) return;
+    if (!Number.isFinite(menu_id)) return;
     async function fetchVariants() {
-      const response = await getVariantByItemId(itemId);
+      const response = await getVariantByItemId(menu_id);
       if (response.ok) {
         setVariants(response.data);
       } else {
@@ -86,12 +155,12 @@ const page = () => {
       }
     }
     fetchVariants();
-  }, [itemId]);
+  }, [menu_id]);
 
   useEffect(() => {
-    if (!Number.isFinite(itemId)) return;
+    if (!Number.isFinite(menu_id)) return;
     async function fetchMenuItem() {
-      const response = await getMenuItemById(itemId);
+      const response = await getMenuItemById(menu_id);
       if (response.ok) {
         setMenuItem(response.data);
       } else {
@@ -99,11 +168,11 @@ const page = () => {
       }
     }
     fetchMenuItem();
-  }, [itemId]);
+  }, [menu_id]);
 
   useEffect(() => {
     const fetchToppings = async () => {
-      const response = await getToppingsByMenuId(itemId);
+      const response = await getToppingsByMenuId(menu_id);
       if (response.ok) {
         setToppings(response.data);
       } else {
@@ -111,11 +180,11 @@ const page = () => {
       }
     };
     fetchToppings();
-  }, [itemId]);
+  }, [menu_id]);
 
   useEffect(() => {
     const fetchModifications = async () => {
-      const response = await getModificationsByMenuId(itemId);
+      const response = await getModificationsByMenuId(menu_id);
       if (response.ok) {
         setModifications(response.data);
       } else {
@@ -123,7 +192,7 @@ const page = () => {
       }
     };
     fetchModifications();
-  }, [itemId]);
+  }, [menu_id]);
 
   useEffect(() => {
     async function fetchIngredients() {
@@ -143,8 +212,62 @@ const page = () => {
     if (variants.length === 0) return;
     const baseVariant = variants[0];
     setSelectedVariant(baseVariant);
+    setSelectedSize(baseVariant.size);
+    setSelectedShape(baseVariant.shape);
+    setSelectedFilling(baseVariant.filling);
+    setTotalPrice(Number(baseVariant.price));
   }, [variants]);
 
+  useEffect(() => {
+    if (variants.length === 0) return;
+
+    const matchingVariant = variants.find((variant) => {
+      const sizeMatches = selectedSize ? variant.size === selectedSize : true;
+      const shapeMatches = selectedShape
+        ? variant.shape === selectedShape
+        : true;
+      const fillingMatches = selectedFilling
+        ? variant.filling === selectedFilling
+        : true;
+
+      if (!(sizeMatches && shapeMatches && fillingMatches)) {
+        toast.error(
+          "Selected combination is unavailable. Please choose a different option.",
+        );
+      }
+      return sizeMatches && shapeMatches && fillingMatches;
+    });
+
+    setSelectedVariant(matchingVariant ?? null);
+  }, [selectedSize, selectedShape, selectedFilling, variants]);
+
+  useEffect(() => {
+    const variantPrice = selectedVariant ? Number(selectedVariant.price) : 0;
+    const toppingPrice = selectedToppingId
+      ? Number(
+          toppings.find((topping) => topping.id === selectedToppingId)?.price ??
+            0,
+        )
+      : 0;
+    const modificationPrice = selectedModificationId
+      ? Number(
+          modifications.find(
+            (modification) => modification.id === selectedModificationId,
+          )?.price ?? 0,
+        )
+      : 0;
+
+    setTotalPrice((variantPrice + toppingPrice + modificationPrice) * quantity);
+  }, [
+    selectedVariant,
+    selectedToppingId,
+    selectedModificationId,
+    quantity,
+    toppings,
+    modifications,
+  ]);
+
+  //Image logic
   const handleNext = () =>
     setPosition((prevIndexes) =>
       prevIndexes.map((prevIndex) => (prevIndex + 1) % 4),
@@ -154,31 +277,12 @@ const page = () => {
       prevIndexes.map((prevIndex) => (prevIndex - 1 + 4) % 4),
     );
 
-  async function handleCart(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!selectedVariant) return;
-    const quantity = e.currentTarget.quantity.value;
-    if (quantity > selectedVariant?.quantity) {
-      alert(
-        "Sorry, we don't have that many in stock! We only have " +
-          selectedVariant.quantity +
-          " available.",
-      );
-    }
-  }
-
-  const baseURL = "https://folioimagess.s3.us-east-1.amazonaws.com/public/";
+  const baseURL = process.env.NEXT_PUBLIC_S3_BASE_URL;
   const signCakeImages = [
-    "good2.jpg",
-    "good28.jpg",
-    "good31.jpg",
-    "good16.jpg",
-  ];
-  const numbCakeImages = [
-    "good3.jpg",
-    "good11.jpg",
-    "good32.jpg",
-    "good30.jpg",
+    menuItem?.image_url || "cake.png",
+    menuItem?.image_url || "cake.png",
+    menuItem?.image_url || "cake.png",
+    menuItem?.image_url || "cake.png",
   ];
 
   const imagePositions = {
@@ -212,9 +316,21 @@ const page = () => {
     {} as Record<string, { size: string; price: number }[]>,
   );
 
+  function handleToppingChange(toppingId: number | null) {
+    setSelectedToppingId(toppingId);
+  }
+
+  function handleModificationChange(modificationId: number | null) {
+    setSelectedModificationId(modificationId);
+  }
+
+  function handleQuantityChange(quantity_val: number) {
+    setQuantity(quantity_val);
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center mt-60 gap-20">
-      <div className="ml-20 flex gap-80 flex-row">
+    <div className="flex flex-col mb-20 items-center justify-center mt-60 ">
+      <div className="ml-20 flex gap-70 flex-row">
         <div className="flex flex-col">
           <div>
             {signCakeImages.map((image: string, index: number) => (
@@ -239,9 +355,13 @@ const page = () => {
                 <ArrowRight color={"#74070E"} onClick={handleNext}></ArrowRight>
               </div>
               <div
-                className={`${josefin.className} mt-20 text-center max-w-sm mx-auto leading-relaxed`}
+                className={`${josefin.className} mt-10 text-center max-w-sm mx-auto leading-relaxed`}
               >
-                <p>{menuItem?.description}</p>
+                <p>
+                  {menuItem?.description
+                    ? menuItem.description
+                    : "No description available."}
+                </p>
               </div>
             </div>
           </div>
@@ -255,7 +375,7 @@ const page = () => {
               </defs>
               <text
                 fill="#74070E"
-                fontSize="50"
+                fontSize="30"
                 textAnchor="middle"
                 className={`${dawn.className}`}
               >
@@ -264,97 +384,215 @@ const page = () => {
                 </textPath>
               </text>
             </svg>
-            <div
-              className={`${dawn.className} text-[#74070E] text-5xl font-bold text-center -mt-10`}
-            >
-              ${selectedVariant?.price}
+            <div className="flex flex-row gap-10">
+              <div
+                className={`${dawn.className} text-[#74070E] text-5xl font-bold text-center -mt-10`}
+              >
+                ${totalPrice.toFixed(2)}
+              </div>
+              {menuItem?.category === "party_item" && (
+                <div
+                  className={`${dawn.className}  text-[#74070E] text-5xl font-bold text-center -mt-10 `}
+                >
+                  Count:{" "}
+                  {selectedVariant?.count ? selectedVariant.count : "N/A"}
+                </div>
+              )}
             </div>
           </div>
 
           {/*Now Add options to select various menu item attributes/categories */}
-          {menuItem && (
-            <div
-              key={menuItem.id}
-              className="w-full max-w-lg grid grid-cols-2 gap-3 mt-2"
-            >
-              <div className="flex flex-col gap-3">
-                <Select>
-                  <SelectTrigger className="w-full border-none">
-                    <SelectValue placeholder="Select Size" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Size</SelectLabel>
-                      {variants.map((variant) => (
-                        <SelectItem
-                          key={variant.id}
-                          value={variant.size}
-                          defaultChecked={variant.id === selectedVariant?.id}
-                        >
-                          {variant.size}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <Select>
-                  <SelectTrigger className="w-full border-none">
-                    <SelectValue placeholder="Select Topping" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Topping</SelectLabel>
-                      {toppings.map((topping) => (
-                        <SelectItem key={topping.id} value={topping.name}>
-                          {topping.name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+          {menuItem && variants && (
+            <form onSubmit={handleAddToCart}>
+              <div
+                key={menuItem.id}
+                className="w-lg grid grid-cols-2 gap-3 mt-2"
+              >
+                <div className="flex flex-col gap-3">
+                  <Select
+                    value={selectedSize ?? ""}
+                    onValueChange={setSelectedSize}
+                  >
+                    <SelectTrigger className="w-full border-none">
+                      <SelectValue placeholder="Select Size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Size</SelectLabel>
+                        {uniqueSizes.map((size) => (
+                          //check if unique size for the dropdown - don't want multiple
+                          <SelectItem key={size} value={size}>
+                            {size}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <Select
+                    value={
+                      selectedToppingId ? String(selectedToppingId) : "none"
+                    }
+                    onValueChange={(value) =>
+                      handleToppingChange(
+                        value === "none" ? null : Number(value),
+                      )
+                    }
+                  >
+                    <SelectTrigger className="w-full border-none">
+                      <SelectValue placeholder="Select Topping" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Topping</SelectLabel>
+                        <SelectItem value="none">No topping</SelectItem>
+                        {toppings.map((topping) => (
+                          <SelectItem
+                            key={topping.id}
+                            value={String(topping.id)}
+                          >
+                            {topping.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <div>
+                    <Select
+                      value={
+                        selectedModificationId
+                          ? String(selectedModificationId)
+                          : "none"
+                      }
+                      onValueChange={(value) =>
+                        handleModificationChange(
+                          value === "none" ? null : Number(value),
+                        )
+                      }
+                    >
+                      <SelectTrigger className="w-full border-none">
+                        <SelectValue placeholder="Select Modification" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Modification</SelectLabel>
+                          <SelectItem value="none">No modification</SelectItem>
+                          {modifications.map((m) => (
+                            <SelectItem key={m.id} value={String(m.id)}>
+                              {m.categories}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <Select
+                    value={selectedFilling ?? ""}
+                    onValueChange={setSelectedFilling}
+                  >
+                    <SelectTrigger className="w-full border-none">
+                      <SelectValue placeholder="Select Filling" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Filling</SelectLabel>
+                        {uniqueFillings.map((filling) => (
+                          <SelectItem
+                            key={filling}
+                            value={filling?.toString() || "None"}
+                          >
+                            {filling}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  {selectedVariant?.count && (
+                    <Select
+                      value={String(quantity)}
+                      onValueChange={(v) => handleQuantityChange(Number(v))}
+                    >
+                      <SelectTrigger className="w-full border-none">
+                        <SelectValue placeholder="Select Quantity" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Quantity</SelectLabel>
+                          {Array.from(
+                            { length: selectedVariant.quantity },
+                            (_, i) => i + 1,
+                          ).map((quantity) => (
+                            <SelectItem
+                              key={quantity}
+                              value={quantity.toString()}
+                            >
+                              {quantity}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  )}
+                  <Select
+                    value={selectedShape ?? ""}
+                    onValueChange={setSelectedShape}
+                  >
+                    <SelectTrigger className="w-full border-none">
+                      <SelectValue placeholder="Select Shape" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Shape</SelectLabel>
+                        {uniqueShapes.map((shapes) => (
+                          <SelectItem
+                            key={shapes}
+                            value={shapes?.toString() || ""}
+                          >
+                            {shapes}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div className="flex flex-col gap-3">
-                <Select>
-                  <SelectTrigger className="w-full border-none">
-                    <SelectValue placeholder="Select Filling" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Filling</SelectLabel>
-                      {variants.map((variant) => (
-                        <SelectItem key={variant.id} value={variant.filling}>
-                          {variant.filling}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <Input className="w-full border-none" placeholder="Quantity" />
+
+              <div className="flex flex-col gap-10">
+                <div className="w-full max-w-lg mt-1">
+                  <Label
+                    className={`${josefin.className} mt-10`}
+                    htmlFor="instructions"
+                  >
+                    Add Custom Inscription (No additional charges):
+                  </Label>
+                  <Input
+                    id="instructions"
+                    disabled={
+                      getModifNameById(selectedModificationId) !==
+                      "Add an inscription"
+                    }
+                    className="w-full rounded-none border-0 border-b-2 border-black px-0 focus-visible:ring-0 focus-visible:border-black"
+                  />
+                </div>
+                <div className="w-full max-w-lg flex justify-end">
+                  <Button
+                    variant="magnolia"
+                    type="submit"
+                    className="px-10"
+                    disabled={!selectedVariant}
+                  >
+                    Add to Cart
+                  </Button>
+                </div>
               </div>
-            </div>
+            </form>
           )}
-          <div className="w-full max-w-lg mt-1">
-            <Label
-              className={`${josefin.className} mt-10`}
-              htmlFor="instructions"
-            >
-              Add Custom Decor (Additional Charges may apply):
-            </Label>
-            <Input
-              id="instructions"
-              className="w-full rounded-none border-0 border-b-2 border-black px-0 focus-visible:ring-0 focus-visible:border-black"
-            />
-          </div>
-          <div className="w-full max-w-lg flex justify-end">
-            <Button variant="magnolia" className="px-10">
-              Add to Cart
-            </Button>
-          </div>
         </div>
       </div>
 
       <div
-        className={`text-[#74070E] ${josefin.className} text-xl ml-0 flex  gap-20 flex-row`}
+        className={`text-[#74070E] ${josefin.className} text-xl ml-0 flex mt-30  gap-20 flex-row`}
       >
         <div>
           <Accordion
@@ -371,7 +609,7 @@ const page = () => {
                 {ingredients.length > 0 ? (
                   <ul className="list-disc list-inside">
                     {ingredients.map((ingredient) => (
-                      <li key={ingredient.id}>{ingredient.name}</li>
+                      <li key={ingredient.id}>{ingredient.ingredient_name}</li>
                     ))}
                   </ul>
                 ) : (

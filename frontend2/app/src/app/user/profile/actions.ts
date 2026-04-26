@@ -13,9 +13,7 @@ type ActionResult = {
   ok: boolean;
 };
 
-export async function getAdditionalInfoByUserId(
-  userID: string,
-): Promise<AdditionalInfo | null> {
+export async function getAdditionalInfoByUserId(userID: string) {
   try {
     const connection = await pool;
     if (!connection) {
@@ -25,17 +23,18 @@ export async function getAdditionalInfoByUserId(
       "SELECT id, user_id, display_name, allergies, phone_number FROM additional_info WHERE UUID_TO_BIN(?) = user_id LIMIT 1",
       [userID],
     );
-
+    //turn the id to a string
     const typedRows = rows as AdditionalInfo[];
+    if (typedRows[0]) {
+      typedRows[0].user_id = Buffer.from(typedRows[0].user_id).toString("hex");
+    }
     return typedRows[0] ?? null;
   } catch (error: any) {
     throw new Error("Failed to fetch additional info");
   }
 }
 
-export async function insertAdditionalInfo(
-  userAdditionalInfo: Omit<AdditionalInfo, "id">,
-): Promise<ActionResult> {
+export async function insertAdditionalInfo(userAdditionalInfo: AdditionalInfo) {
   try {
     const connection = await pool;
     if (!connection) {
@@ -65,9 +64,7 @@ export async function insertAdditionalInfo(
   }
 }
 
-export async function updateAdditionalInfo(
-  additionalInfo: AdditionalInfo,
-): Promise<ActionResult> {
+export async function updateAdditionalInfo(additionalInfo: AdditionalInfo) {
   try {
     const connection = await pool;
     if (!connection) {

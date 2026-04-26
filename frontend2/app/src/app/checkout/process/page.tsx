@@ -1,34 +1,120 @@
 "use client";
-import { josefin } from "@/styles/fonts";
-import React, { useState } from "react";
-import Image from "next/image";
+
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { josefin } from "@/styles/fonts";
 import { Button } from "@/components/ui/button";
 import CheckoutPage from "@/components/checkout-page";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "radix-ui";
+import MenuItem from "@/components/menu-item";
+import { toast } from "sonner";
+import { getOrCreateCartId } from "@/app/menu/item/[item_id]/actions";
+import { getCartItems } from "@/app/checkout/process/actions";
 import { Input } from "@/components/ui/input";
+
+interface CartItem {
+  cart_id: number;
+  menu_id: number;
+  menu_variant_id: number;
+  topping_id: number | null;
+  modification_id: number | null;
+  quantity: number;
+  product_name: string;
+  product_image_url: string | null;
+  product_size: string;
+  product_price: number;
+  variant_quantity: number;
+  variant_count: number;
+}
+
 const page = () => {
+  const supabase = createClient();
   const router = useRouter();
+
   const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [cartId, setCartId] = useState<number | null>(null);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  useEffect(() => {
+    async function checkAuthStatus() {
+      const user = await supabase.auth.getUser();
+      setIsAuthenticated(!!user.data.user);
+    }
+
+    checkAuthStatus();
+  }, [supabase.auth]);
+
+  useEffect(() => {
+    async function retrieveCartId() {
+      try {
+        const id = await getOrCreateCartId();
+        setCartId(id);
+      } catch (error) {
+        console.error("Error retrieving cart ID:", error);
+      }
+    }
+
+    retrieveCartId();
+  }, []);
+
+  useEffect(() => {
+    async function retrieveCartItems() {
+      if (!cartId) {
+        return;
+      }
+
+      const data = await getCartItems(cartId);
+      if (!data.ok) {
+        console.error("Failed to fetch cart items");
+        return;
+      }
+
+      setCartItems((data.data ?? []) as CartItem[]);
+    }
+
+    retrieveCartItems();
+  }, [cartId]);
 
   async function handleForward() {
+    if (!isAuthenticated) {
+      toast.error("Please log in to proceed to checkout.");
+      return;
+    }
+
     setStep((prev) => (prev === 1 ? 2 : prev === 2 ? 3 : prev));
   }
-  async function handleBack() {
+
+  function handleBack() {
     setStep((prev) => (prev === 2 ? 1 : prev === 3 ? 2 : prev));
   }
+
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + Number(item.product_price) * Number(item.quantity),
+    0,
+  );
+
+  async function handleSubmitContactInfo(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    //ensure all elements are filled out
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const lastName = formData.get("last-name") as string;
+    const email = formData.get("email") as string;
+    const phone = formData.get("phone") as string;
+    console.log("Contact Info:", { name, lastName, email, phone });
+    if (!name || !lastName || !email || !phone) {
+      toast.error("Please fill out all fields.");
+      return;
+    }
+    //for now, no validation
+
+    handleForward();
+  }
+
   return (
-    <div className="min-h-screen gap-10 mb-20 flex-col flex justify-center">
-      <div className="justify-center flex flex-row text-[#74070E] text-2xl">
+    <div className="min-h-screen pt-32 pb-20 gap-10 flex-col flex justify-start overflow-x-hidden">
+      <div className="justify-center flex flex-row text-[#74070E] text-2xl px-6">
         <div className={"font-medium"}>Shopping Cart</div>
         <svg
           width="83"
@@ -74,95 +160,92 @@ const page = () => {
             {step == 1 ? "Shopping Cart" : step == 2 ? "Contact" : "Payment"}
           </h1>
           <div className="h-px w-full bg-[#74070E] my-4" />
-          {step == 1 && (
-            <div className="flex flex-row items-start gap-6">
-              <Image
-                src="https://folioimagess.s3.us-east-1.amazonaws.com/public/good13.jpg"
-                alt="Cake"
-                width={180}
-                height={180}
-                className="rounded-lg"
-              />
-              <div className="flex text-[15px] text-[#74070E] flex-col items-start gap-5">
-                <div className="flex flex-row gap-70 items-center">
-                  <h2 className="text-[20px] font-medium">Vanilla Cupcakes</h2>
-                  <h3 className="text-[15px] underline ">Remove</h3>
-                </div>
-                <div className="flex flex-row gap-8 items-center">
-                  <p>Size 8"</p>
-                  <p>$3.00</p>
-                </div>
 
-                <Select>
-                  <SelectTrigger className={`w-30 border-none`}>
-                    <SelectValue
-                      className={`text-[#74070E] ${josefin.className}`}
-                      placeholder="Quantity 1"
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Quantity</SelectLabel>
-                      <SelectItem value="1">Quantity 1</SelectItem>
-                      <SelectItem value="2">Quantity 2</SelectItem>
-                      <SelectItem value="3">Quantity 3</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
+          {step === 1 && (
+            <div className="flex flex-col gap-6">
+              {cartItems.length === 0 ? (
+                <p className="text-[16px] text-[#74070E]/80">
+                  Your cart is empty.
+                </p>
+              ) : (
+                cartItems.map((item) => (
+                  <MenuItem
+                    key={`${item.menu_id}-${item.menu_variant_id}-${item.topping_id ?? "none"}-${item.modification_id ?? "none"}`}
+                    menuItemInfo={{
+                      product_name: item.product_name,
+                      product_image_url: item.product_image_url,
+                      product_size: item.product_size,
+                      product_price: Number(item.product_price),
+                      quantity: Number(item.quantity),
+                      cart_id: Number(item.cart_id),
+                      menu_id: Number(item.menu_id),
+                      variant_quantity: Number(item.variant_quantity),
+                      variant_count: Number(item.variant_count),
+                      variant_id: Number(item.menu_variant_id),
+                    }}
+                  />
+                ))
+              )}
             </div>
           )}
+
           {step == 2 && (
             <div className="flex flex-col">
-              <div className="flex flex-row mt-7 gap-15 w-full">
-                <div className="w-100 flex flex-col gap-5 text-[15px]">
-                  <label htmlFor="name">First Name</label>
-                  <input
-                    type="text"
-                    id="name"
-                    className="rounded-none border-0 border-b border-[#74070E] px-0"
-                  />
-                  <label htmlFor="email">Email</label>
-                  <input
-                    type="email"
-                    id="email"
-                    className="rounded-none border-0 border-b border-[#74070E] px-0"
-                  />
+              <form onSubmit={(e) => handleSubmitContactInfo(e)}>
+                <div className="flex flex-row mt-7 gap-15 w-full">
+                  <div className="w-100 flex flex-col gap-5 text-[15px]">
+                    <label htmlFor="name">First Name</label>
+                    <Input
+                      name="name"
+                      type="text"
+                      id="name"
+                      className="rounded-none border-0 border-b border-[#74070E] px-0"
+                    />
+                    <label htmlFor="email">Email</label>
+                    <Input
+                      name="email"
+                      type="email"
+                      id="email"
+                      className="rounded-none border-0 border-b border-[#74070E] px-0"
+                    />
+                  </div>
+                  <div className="w-100 flex flex-col gap-5 text-[15px]">
+                    <label htmlFor="last-name">Last Name</label>
+                    <Input
+                      name="last-name"
+                      type="text"
+                      id="last-name"
+                      className="rounded-none border-0 border-b border-[#74070E] px-0"
+                    />
+                    <label htmlFor="phone">Phone</label>
+                    <Input
+                      name="phone"
+                      type="text"
+                      id="phone"
+                      className="rounded-none border-0 border-b border-[#74070E] px-0 "
+                    />
+                  </div>
                 </div>
-                <div className="w-100 flex flex-col gap-5 text-[15px]">
-                  <label htmlFor="name">Last Name</label>
-                  <input
-                    type="text"
-                    id="name"
-                    className="rounded-none border-0 border-b border-[#74070E] px-0"
-                  />
-                  <label htmlFor="email">Phone</label>
-                  <input
-                    type="email"
-                    id="email"
-                    className="rounded-none border-0 border-b border-[#74070E] px-0 "
-                  />
+                <div className="flex flex-row gap-80 mt-10">
+                  <h3
+                    className="text-[15px] font-medium underline"
+                    onClick={handleBack}
+                  >
+                    Back to Shopping Cart
+                  </h3>
+                  <Button
+                    type="submit"
+                    variant="magnolia"
+                    className="w-30 mr-0"
+                  >
+                    Proceed
+                  </Button>
                 </div>
-              </div>
-              <div className="flex flex-row gap-80 mt-10">
-                <h3
-                  className="text-[15px] font-medium underline"
-                  onClick={handleBack}
-                >
-                  Back to Shopping Cart
-                </h3>
-                <Button
-                  onClick={handleForward}
-                  variant="magnolia"
-                  className="w-30 mr-0"
-                >
-                  Proceed
-                </Button>
-              </div>
+              </form>
             </div>
           )}
 
-          {step == 3 && <CheckoutPage amount={150} />}
+          {step == 3 && <CheckoutPage amount={subtotal} />}
         </div>
         <div
           className={`w-full max-w-sm flex flex-col text-[#74070E] ${josefin.className}`}
@@ -174,31 +257,63 @@ const page = () => {
             className="h-px w-full bg-[#74070E]
            my-4"
           />
-          <div className="flex flex-row gap-70">
+          {(step == 3 || step == 2) && (
+            <div className="max-h-[calc(100vh-22rem)] overflow-y-auto overflow-x-hidden pr-2 flex flex-col gap-6">
+              {cartItems.map((item) => (
+                <MenuItem
+                  key={`${item.menu_id}-${item.menu_variant_id}-${item.topping_id ?? "none"}-${item.modification_id ?? "none"}`}
+                  menuItemInfo={{
+                    product_name: item.product_name,
+                    product_image_url: item.product_image_url,
+                    product_size: item.product_size,
+                    product_price: Number(item.product_price),
+                    quantity: Number(item.quantity),
+                    cart_id: Number(item.cart_id),
+                    menu_id: Number(item.menu_id),
+                    variant_quantity: Number(item.variant_quantity),
+                    variant_count: Number(item.variant_count),
+                    variant_id: Number(item.menu_variant_id),
+                  }}
+                />
+              ))}
+            </div>
+          )}
+          <div className="flex flex-row gap-70 mt-10">
             <h3>Subtotal</h3>
-            <h3>$150</h3>
+            <h3>${subtotal.toFixed(2)}</h3>
           </div>
           <div className="h-px w-full bg-[#74070E] my-4" />
           <div className="flex flex-row gap-75">
             <h3>Total</h3>
-            <h3>$150</h3>
+            <h3>${subtotal.toFixed(2)}</h3>
           </div>
           <div className="h-px w-full bg-[#74070E] my-4" />
           <div className="flex flex-row gap-35">
-            <h3
-              className="cursor-pointer underline font-medium text-[15px]"
-              onClick={() => router.push("/menu/collection")}
-            >
-              Continue Shopping
-            </h3>
-
-            <Button
-              onClick={handleForward}
-              className="cursor-pointer w-30"
-              variant="magnolia"
-            >
-              Checkout
-            </Button>
+            {step == 1 && (
+              <h3
+                className="cursor-pointer underline font-medium text-[15px]"
+                onClick={() => router.push("/menu/collection")}
+              >
+                Continue Shopping
+              </h3>
+            )}
+            {step == 1 && (
+              <Button
+                onClick={handleForward}
+                className="cursor-pointer w-30"
+                variant="magnolia"
+              >
+                Checkout
+              </Button>
+            )}
+            {step == 3 && (
+              <h3
+                onClick={handleBack}
+                className="cursor-pointer underline font-medium text-[17px]"
+              >
+                Back to Contact
+              </h3>
+            )}
           </div>
         </div>
       </div>

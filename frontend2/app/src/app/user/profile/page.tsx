@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { dawn, crimson } from "@/styles/fonts";
+import { dawn, crimson, josefin } from "@/styles/fonts";
 import { useEffect, useState } from "react";
 import React from "react";
 import {
@@ -162,8 +162,8 @@ const Page = () => {
 
   return (
     <div className="flex flex-row items-center justify-center w-fill h-screen">
-      <div className="flex flex-col items-center gap-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-22 sm:gap-25 md:gap-25 lg:gap-15 xl:gap-20 w-full lg:w-auto">
+      <div className="flex flex-col items-center gap-10 mt-30">
+        <div className="grid grid-cols-1">
           {profileItems.map((item, index) => (
             <div
               key={index}
@@ -172,9 +172,9 @@ const Page = () => {
               <img
                 src="/images/cake.png"
                 alt="image"
-                className="w-full h-full object-cover rounded-full"
+                className="w-2/3 h-2/3 object-cover rounded-full"
               />
-              <svg viewBox="0 0 300 300" className="absolute w-100 h-100">
+              <svg viewBox="0 0 300 300" className="absolute w-80 h-80">
                 <defs>
                   <path
                     id={`circlePath-${item.id}`}
@@ -187,8 +187,10 @@ const Page = () => {
                   fontSize="32"
                   className={` text-4xl ${dawn.className}`}
                 >
-                  <textPath href={`#circlePath-${item.id}`} startOffset="20%">
-                    {item.name}
+                  <textPath href={`#circlePath-${item.id}`} startOffset={"10%"}>
+                    {additionalInfo?.display_name
+                      ? additionalInfo.display_name
+                      : item.name}
                   </textPath>
                 </text>
               </svg>
@@ -196,104 +198,107 @@ const Page = () => {
           ))}
         </div>
         <div>
-          <h3 className={`${crimson.className} text-[#74070E] text-3xl`}>
+          <h3
+            className={`${crimson.className} text-[#74070E] mt-[-40px] mb-5 text-3xl text-center`}
+          >
             Additional Info
           </h3>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col gap-5 items-center">
             {additionalInfo ? (
               <div
-                className={`flex flex-col items-start gap-2 text-[#74070E] ${crimson.className} text-xl`}
+                className={`flex flex-col items-start gap-5 text-[#74070E] ${crimson.className} text-[16px]`}
               >
                 <p>Allergies: {additionalInfo.allergies}</p>
                 <p>Phone Number: {additionalInfo.phone_number}</p>
               </div>
             ) : (
               <div
-                className={`flex flex-col items-center text-start gap-4 ${crimson.className} text-xl`}
+                className={`flex flex-col items-center text-start gap-4 ${crimson.className} text-[18px]`}
               >
-                <p>No additional info found. Consider adding one below</p>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      className={`${dawn.className} text-xl border-[#74070E] justify-center`}
-                      variant="magnolia"
-                    >
-                      Add Additional Info
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-sm">
-                    <form onSubmit={handleSubmit}>
-                      <DialogHeader>
-                        <DialogTitle>Edit Additional Info</DialogTitle>
-                        <DialogDescription>
-                          Make changes to your additional info here. Click save
-                          when you&apos;re done.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <FieldGroup>
-                        <Field>
-                          <Label htmlFor="display_name">Name</Label>
-                          <Input id="display_name" name="display_name" />
-                        </Field>
-                        <Field>
-                          <Label htmlFor="phone-number">Phone Number</Label>
-                          <Input
-                            id="phone-number"
-                            name="phone_number"
-                            defaultValue="1234567890"
-                            type="tel"
-                          />
-                        </Field>
-                        <Field>
-                          <Label htmlFor="allergies-1">Allergies</Label>
-                          <Combobox
-                            multiple
-                            autoHighlight
-                            items={allergies}
-                            defaultValue={[allergies[0]]}
-                            name="allergies"
-                          >
-                            <ComboboxChips
-                              ref={anchor}
-                              className="w-full max-w-xs"
-                            >
-                              <ComboboxValue>
-                                {(values) => (
-                                  <React.Fragment>
-                                    {values.map((value: string) => (
-                                      <ComboboxChip key={value}>
-                                        {value}
-                                      </ComboboxChip>
-                                    ))}
-                                    <ComboboxChipsInput />
-                                  </React.Fragment>
-                                )}
-                              </ComboboxValue>
-                            </ComboboxChips>
-                            <ComboboxContent anchor={anchor}>
-                              <ComboboxEmpty>No items found.</ComboboxEmpty>
-                              <ComboboxList>
-                                {(item) => (
-                                  <ComboboxItem key={item} value={item}>
-                                    {item}
-                                  </ComboboxItem>
-                                )}
-                              </ComboboxList>
-                            </ComboboxContent>
-                          </Combobox>
-                        </Field>
-                      </FieldGroup>
-                      <DialogFooter>
-                        <DialogClose asChild>
-                          <Button variant="outline">Cancel</Button>
-                        </DialogClose>
-                        <Button type="submit">Save changes</Button>
-                      </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
+                <p>No additional info found. Consider adding one below!</p>
               </div>
             )}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  className={`${josefin.className} text-xl border-[#74070E] justify-center`}
+                  variant="magnolia"
+                >
+                  {additionalInfo
+                    ? "Edit Additional Info"
+                    : "Add Additional Info"}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-sm">
+                <form onSubmit={handleSubmit}>
+                  <DialogHeader>
+                    <DialogTitle>Edit Additional Info</DialogTitle>
+                    <DialogDescription>
+                      Make changes to your additional info here. Click save when
+                      you&apos;re done.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <FieldGroup>
+                    <Field>
+                      <Label htmlFor="display_name">Name</Label>
+                      <Input id="display_name" name="display_name" />
+                    </Field>
+                    <Field>
+                      <Label htmlFor="phone-number">Phone Number</Label>
+                      <Input
+                        id="phone-number"
+                        name="phone_number"
+                        defaultValue="1234567890"
+                        type="tel"
+                      />
+                    </Field>
+                    <Field>
+                      <Label htmlFor="allergies-1">Allergies</Label>
+                      <Combobox
+                        multiple
+                        autoHighlight
+                        items={allergies}
+                        defaultValue={[allergies[0]]}
+                        name="allergies"
+                      >
+                        <ComboboxChips ref={anchor} className="w-full max-w-xs">
+                          <ComboboxValue>
+                            {(values) => (
+                              <React.Fragment>
+                                {values.map((value: string) => (
+                                  <ComboboxChip key={value}>
+                                    {value}
+                                  </ComboboxChip>
+                                ))}
+                                <ComboboxChipsInput />
+                              </React.Fragment>
+                            )}
+                          </ComboboxValue>
+                        </ComboboxChips>
+                        <ComboboxContent anchor={anchor}>
+                          <ComboboxEmpty>No items found.</ComboboxEmpty>
+                          <ComboboxList>
+                            {(item) => (
+                              <ComboboxItem key={item} value={item}>
+                                {item}
+                              </ComboboxItem>
+                            )}
+                          </ComboboxList>
+                        </ComboboxContent>
+                      </Combobox>
+                    </Field>
+                  </FieldGroup>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline">Cancel</Button>
+                    </DialogClose>
+                    <Button variant="magnolia" type="submit">
+                      Save
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
