@@ -106,7 +106,6 @@ export default function Navbar() {
         id: user.id,
         email: user.email,
       });
-      console.log("User ensured in database:", response);
     }
     ensureUserInDatabase();
   }, [user]);

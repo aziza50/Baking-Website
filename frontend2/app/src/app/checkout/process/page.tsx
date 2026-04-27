@@ -52,7 +52,7 @@ const page = () => {
         const id = await getOrCreateCartId();
         setCartId(id);
       } catch (error) {
-        console.error("Error retrieving cart ID:", error);
+        throw new Error("Failed to retrieve or create cart ID");
       }
     }
 
@@ -67,8 +67,7 @@ const page = () => {
 
       const data = await getCartItems(cartId);
       if (!data.ok) {
-        console.error("Failed to fetch cart items");
-        return;
+        throw new Error("Failed to fetch cart items");
       }
 
       setCartItems((data.data ?? []) as CartItem[]);
@@ -103,7 +102,6 @@ const page = () => {
     const lastName = formData.get("last-name") as string;
     const email = formData.get("email") as string;
     const phone = formData.get("phone") as string;
-    console.log("Contact Info:", { name, lastName, email, phone });
     if (!name || !lastName || !email || !phone) {
       toast.error("Please fill out all fields.");
       return;
@@ -271,6 +269,7 @@ const page = () => {
                 <MenuItem
                   key={`${item.menu_id}-${item.menu_variant_id}-${item.topping_id ?? "none"}-${item.modification_id ?? "none"}`}
                   menuItemInfo={{
+                    holds_id: Number(item.holds_id),
                     product_name: item.product_name,
                     product_image_url: item.product_image_url,
                     product_size: item.product_size,
@@ -281,6 +280,12 @@ const page = () => {
                     variant_quantity: Number(item.variant_quantity),
                     variant_count: Number(item.variant_count),
                     variant_id: Number(item.menu_variant_id),
+                    topping_id: item.topping_id
+                      ? Number(item.topping_id)
+                      : null,
+                    modification_id: item.modification_id
+                      ? Number(item.modification_id)
+                      : null,
                   }}
                 />
               ))}

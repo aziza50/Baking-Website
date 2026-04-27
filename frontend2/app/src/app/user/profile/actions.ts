@@ -41,8 +41,6 @@ export async function insertAdditionalInfo(userAdditionalInfo: AdditionalInfo) {
       throw new Error("Database connection pool is undefined");
     }
 
-    console.log("Attempting insert with:", JSON.stringify(userAdditionalInfo));
-
     await connection.query(
       "INSERT INTO additional_info (user_id, display_name, allergies, phone_number) VALUES (UUID_TO_BIN(?), ?, ?, ?)",
       [
