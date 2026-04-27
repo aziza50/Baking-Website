@@ -72,7 +72,9 @@ const MenuItem = ({ menuItemInfo }: { menuItemInfo: MenuItemProps }) => {
               ? `Count: ${menuItemInfo.variant_count}`
               : `Size: ${menuItemInfo.product_size}`}
           </p>
-          <p>${menuItemInfo.product_price.toFixed(2)}</p>
+          <p>
+            ${(menuItemInfo.product_price * menuItemInfo.quantity).toFixed(2)}
+          </p>
         </div>
         <p>{`Quantity: ${menuItemInfo.quantity}`}</p>
       </div>

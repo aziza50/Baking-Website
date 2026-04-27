@@ -134,6 +134,7 @@ const page = () => {
     );
     if (response.ok) {
       toast.success("Item added to cart!");
+      //need to update such that current cart quantity + new quantity
       updateCart(quantity);
     } else {
       toast.error("Failed to add item to cart. Please try again.");
