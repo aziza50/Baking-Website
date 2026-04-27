@@ -10,8 +10,11 @@ async function getPool(): Promise<any> {
 
   const instanceConnectionName =
     process.env.INSTANCE_CONNECTION_NAME || process.env.NEXT_DB_CONNECTION_NAME;
+  const useCloudSqlConnector =
+    process.env.USE_CLOUD_SQL_CONNECTOR === "true" ||
+    (process.env.VERCEL === "1" && Boolean(instanceConnectionName));
 
-  if (instanceConnectionName) {
+  if (instanceConnectionName && useCloudSqlConnector) {
     const connector = new Connector();
 
     const clientOptions = await connector.getOptions({
