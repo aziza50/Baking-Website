@@ -249,7 +249,7 @@ export async function updateMenuVariantQuantity(
     };
   }
 }
-
+//whenever I call add to cart, I also need to updateFunction function from the context
 export async function addToCart(
   cart_id: number,
   menu_id: number,

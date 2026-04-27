@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart, User } from "lucide-react";
@@ -8,7 +8,6 @@ import { createClient } from "@/lib/supabase/client";
 import { crimson } from "../styles/fonts";
 import LogOutButton from "./logout-button";
 import { ensureUserExists } from "@/services/users";
-import { getCartId } from "../menu/item/[item_id]/actions";
 import { getCartQuantity } from "@/app/menu/item/[item_id]/actions";
 import {
   Menubar,
@@ -22,8 +21,8 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import { div } from "framer-motion/client";
 import { getCardId } from "@/app/menu/item/[item_id]/actions";
+import { useCart } from "./cart-context";
 interface AuthUser {
   id: string;
   email: string;
@@ -34,33 +33,26 @@ export default function Navbar() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [cartId, setCartId] = useState<number | null>(null);
-  const [quantityCart, setQuantityCart] = useState<number>(0);
+  const { quantity, setCartQuantity } = useCart();
 
   useEffect(() => {
-    //check if cartId exists in localStorage
-    const fetchCartId = async () => {
-      const cartId = await getCardId();
-      if (cartId) {
-        setCartId(cartId);
+    const fetchCartDetails = async () => {
+      const existingCartId = await getCardId();
+      if (!existingCartId) {
+        setCartQuantity(0);
+        return;
+      }
+
+      setCartId(existingCartId);
+
+      const response = await getCartQuantity(existingCartId);
+      if (response.ok) {
+        setCartQuantity(response.data ?? 0);
       }
     };
-    fetchCartId();
-  }, []);
 
-  useEffect(() => {
-    async function fetchQuantityCart() {
-      if (cartId) {
-        //get the total quantity of items in cart
-        const reponse = await getCartQuantity(cartId);
-        if (reponse.ok) {
-          setQuantityCart(reponse.data);
-        } else {
-          console.error("Failed to fetch cart quantity");
-        }
-      }
-    }
-    fetchQuantityCart();
-  });
+    fetchCartDetails();
+  }, [setCartQuantity]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -196,7 +188,7 @@ export default function Navbar() {
                   <div
                     className={`absolute right-8 top-10 bg-white-500 text-black ${crimson.className} bg-white rounded-xl p-1 `}
                   >
-                    {quantityCart}
+                    {quantity}
                   </div>
                 )}
               </MenubarTrigger>

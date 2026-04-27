@@ -11,8 +11,9 @@ import { toast } from "sonner";
 import { getOrCreateCartId } from "@/app/menu/item/[item_id]/actions";
 import { getCartItems } from "@/app/checkout/process/actions";
 import { Input } from "@/components/ui/input";
-
+import { useCart } from "@/components/cart-context";
 interface CartItem {
+  holds_id: number;
   cart_id: number;
   menu_id: number;
   menu_variant_id: number;
@@ -172,6 +173,7 @@ const page = () => {
                   <MenuItem
                     key={`${item.menu_id}-${item.menu_variant_id}-${item.topping_id ?? "none"}-${item.modification_id ?? "none"}`}
                     menuItemInfo={{
+                      holds_id: Number(item.holds_id),
                       product_name: item.product_name,
                       product_image_url: item.product_image_url,
                       product_size: item.product_size,
@@ -182,6 +184,12 @@ const page = () => {
                       variant_quantity: Number(item.variant_quantity),
                       variant_count: Number(item.variant_count),
                       variant_id: Number(item.menu_variant_id),
+                      topping_id: item.topping_id
+                        ? Number(item.topping_id)
+                        : null,
+                      modification_id: item.modification_id
+                        ? Number(item.modification_id)
+                        : null,
                     }}
                   />
                 ))

@@ -19,6 +19,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useCart } from "@/components/cart-context";
 
 import {
   addToCart,
@@ -113,7 +114,7 @@ const page = () => {
   const uniqueShapes = Array.from(
     new Set(variants.map((variant) => variant.shape)),
   );
-
+  const { updateCart } = useCart();
   async function handleAddToCart(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!selectedVariant) return;
@@ -133,6 +134,7 @@ const page = () => {
     );
     if (response.ok) {
       toast.success("Item added to cart!");
+      updateCart(quantity);
     } else {
       toast.error("Failed to add item to cart. Please try again.");
     }

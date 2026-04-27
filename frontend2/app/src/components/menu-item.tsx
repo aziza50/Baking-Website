@@ -1,20 +1,9 @@
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "radix-ui";
-import { Input } from "@/components/ui/input";
 import Image from "next/image";
-import { josefin } from "@/styles/fonts";
 import { removeFromCart } from "@/app/checkout/process/actions";
-import { menu } from "framer-motion/client";
 import { toast } from "sonner";
+import { useCart } from "./cart-context";
 interface MenuItemProps {
+  holds_id: number;
   product_name: string;
   product_image_url: string | null;
   product_size: string;
@@ -25,21 +14,29 @@ interface MenuItemProps {
   variant_quantity: number;
   variant_count: number;
   variant_id: number;
+  topping_id: number | null;
+  modification_id: number | null;
 }
 
 const MenuItem = ({ menuItemInfo }: { menuItemInfo: MenuItemProps }) => {
   const baseUrl = process.env.NEXT_PUBLIC_S3_BASE_URL;
+  const { updateCart } = useCart();
+
   async function handleRemoveFromCart() {
     const response = await removeFromCart(
+      menuItemInfo.holds_id,
       menuItemInfo.cart_id,
       menuItemInfo.menu_id,
       menuItemInfo.variant_id,
       menuItemInfo.quantity,
+      menuItemInfo.topping_id,
+      menuItemInfo.modification_id,
     );
     if (!response.ok) {
       toast.error("Failed to remove item from cart");
     } else {
       toast.success("Item removed from cart");
+      updateCart(-menuItemInfo.quantity);
     }
     //need to refresh the page to update the cart items, will implement better state management later
     window.location.reload();
@@ -78,27 +75,6 @@ const MenuItem = ({ menuItemInfo }: { menuItemInfo: MenuItemProps }) => {
           <p>${menuItemInfo.product_price.toFixed(2)}</p>
         </div>
         <p>{`Quantity: ${menuItemInfo.quantity}`}</p>
-        {/* <Select>
-          <SelectTrigger className={`w-30 border-none`}>
-            <SelectValue
-              className={`text-[#74070E] ${josefin.className}`}
-              placeholder={`Quantity ${menuItemInfo.quantity}`}
-            />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Quantity</SelectLabel>
-              {Array.from(
-                { length: menuItemInfo.variant_quantity },
-                (_, i) => i + 1,
-              ).map((qty) => (
-                <SelectItem key={qty} value={qty.toString()}>
-                  Quantity {qty}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select> */}
       </div>
     </div>
   );

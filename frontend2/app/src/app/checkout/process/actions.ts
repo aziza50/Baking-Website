@@ -10,20 +10,26 @@ interface response {
 }
 
 export async function removeFromCart(
+  id: number,
   cart_id: number,
   menu_id: number,
   variant_id: number,
   quantity: number,
+  topping_id: number | null,
+  modification_id: number | null,
 ) {
   try {
     const connection = await pool;
     if (!connection) {
       throw new Error("Database connection pool is undefined");
     }
-    const [rows] = await connection.query(
-      "DELETE FROM holds WHERE cart_id = ? AND menu_id = ?",
-      [cart_id, menu_id],
-    );
+    const [rows] = await connection.query("DELETE FROM holds WHERE id = ?", [
+      id,
+    ]);
+
+    if (rows.affectedRows === 0) {
+      return { ok: false, data: 0 };
+    }
 
     //Need to add that quantity back to the menu_variant table
     const quantityResponse = await updateMenuVariantQuantity(
@@ -35,7 +41,14 @@ export async function removeFromCart(
 
     if (!quantityResponse.ok) {
       //well this is awkward, roll back the delete and return an error
-      const response = await addToCart(cart_id, menu_id, variant_id, quantity);
+      const response = await addToCart(
+        cart_id,
+        menu_id,
+        variant_id,
+        topping_id,
+        modification_id,
+        quantity,
+      );
 
       if (!response.ok) {
         //this is even more awkward haha
@@ -85,6 +98,7 @@ export async function getCartItems(cart_id: number) {
 
     const [rows] = await connection.query(
       `SELECT
+        h.id AS holds_id,
         h.cart_id,
         h.menu_id,
         h.menu_variant_id,

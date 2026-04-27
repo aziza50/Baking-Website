@@ -353,6 +353,7 @@ SET item = ?
 
 /*Create a table holds to portray that the cart holds certain menu items and the quantity of each menu item in the cart for a specific cart id*/
 CREATE TABLE holds( 
+id INT AUTO_INCREMENT,
 cart_id INT NOT NULL,
 menu_id INT NOT NULL,
 menu_variant_id INT NOT NULL,
@@ -363,7 +364,7 @@ FOREIGN KEY (cart_id) REFERENCES cart(id) ON DELETE CASCADE,
 FOREIGN KEY (menu_variant_id) REFERENCES menu_variant(id) ON DELETE CASCADE,
 FOREIGN KEY (topping_id) REFERENCES topping(id) ON DELETE CASCADE,
 FOREIGN KEY (modification_id) REFERENCES modification(id) ON DELETE CASCADE,
-PRIMARY KEY (cart_id, menu_id) 
+PRIMARY KEY (id)
 );
 
 
