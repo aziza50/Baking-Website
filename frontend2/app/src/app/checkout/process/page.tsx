@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { josefin } from "@/styles/fonts";
 import { Button } from "@/components/ui/button";
-import CheckoutPage from "@/components/checkout-page";
+// import CheckoutPage from "@/components/checkout-page";
 import MenuItem from "@/components/menu-item";
 import { toast } from "sonner";
 import { getOrCreateCartId } from "@/app/menu/item/[item_id]/actions";
@@ -253,7 +253,7 @@ const page = () => {
             </div>
           )}
 
-          {step == 3 && <CheckoutPage amount={subtotal} />}
+          {/* {step == 3 && <CheckoutPage amount={subtotal} />} */}
         </div>
         <div
           className={`w-full max-w-sm flex flex-col text-[#74070E] ${josefin.className}`}

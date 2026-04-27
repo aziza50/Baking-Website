@@ -118,53 +118,48 @@ const Page = () => {
       alert("Please enter a valid phone number in XXX-XXX-XXXX format.");
       return; // Stop the function here
     } else {
-    console.log(additionalInfo);
-    if (additionalInfo) {
-      const updatedInfo: AdditionalInfo = {
-        id: additionalInfo.id,
-        user_id: String(user?.id || ""),
-        display_name: String(display_name || ""),
-        allergies: String(parsedAllergies.slice(0, -1)),
-        phone_number: String(phone_number || ""),
-      };
+      if (additionalInfo) {
+        const updatedInfo: AdditionalInfo = {
+          id: additionalInfo.id,
+          user_id: String(user?.id || ""),
+          display_name: String(display_name || ""),
+          allergies: String(parsedAllergies.slice(0, -1)),
+          phone_number: String(phone_number || ""),
+        };
 
-      try {
-        console.log("Updating additional info with payload:", updatedInfo);
-        const response = await updateAdditionalInfo(updatedInfo);
-        if (response.ok) {
-          setAdditionalInfo(updatedInfo);
-        } else {
-          console.error("Failed to update additional info");
+        try {
+          const response = await updateAdditionalInfo(updatedInfo);
+          if (response.ok) {
+            setAdditionalInfo(updatedInfo);
+          } else {
+            console.error("Failed to update additional info");
+          }
+        } catch (error) {
+          console.error("Error updating additional info:", error);
         }
-      } catch (error) {
-        console.error("Error updating additional info:", error);
-      }
-    } else {
-      const newAdditionalInfo = {
-        user_id: String(user?.id || ""),
-        display_name: String(display_name || ""),
-        allergies: String(parsedAllergies.slice(0, -1)),
-        phone_number: String(phone_number || ""),
-      };
+      } else {
+        const newAdditionalInfo = {
+          user_id: String(user?.id || ""),
+          display_name: String(display_name || ""),
+          allergies: String(parsedAllergies.slice(0, -1)),
+          phone_number: String(phone_number || ""),
+        };
 
-      // Log for debugging
-      console.log("Payload to send:", JSON.stringify(newAdditionalInfo));
-
-      try {
-        console.log("Inserting new additional info:", newAdditionalInfo);
-        const response = await insertAdditionalInfo(newAdditionalInfo);
-        if (response.ok) {
-          const refreshedAdditionalInfo = await getAdditionalInfoByUserId(
-            user?.id || "",
-          );
-          setAdditionalInfo(refreshedAdditionalInfo);
-        } else {
-          console.error("Failed to add additional info");
+        try {
+          const response = await insertAdditionalInfo(newAdditionalInfo);
+          if (response.ok) {
+            const refreshedAdditionalInfo = await getAdditionalInfoByUserId(
+              user?.id || "",
+            );
+            setAdditionalInfo(refreshedAdditionalInfo);
+          } else {
+            console.error("Failed to add additional info");
+          }
+        } catch (error) {
+          console.error("Error adding additional info:", error);
         }
-      } catch (error) {
-        console.error("Error adding additional info:", error);
       }
-    }}
+    }
   };
 
   return (
