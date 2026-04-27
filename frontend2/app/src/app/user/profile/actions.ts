@@ -1,5 +1,5 @@
 "use server";
-import { pool } from "@/lib/gcp/db";
+import getPool from "@/lib/gcp/db";
 
 interface AdditionalInfo {
   id: number;
@@ -15,7 +15,8 @@ type ActionResult = {
 
 export async function getAdditionalInfoByUserId(userID: string) {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
     if (!connection) {
       throw new Error("Database connection pool is undefined");
     }
@@ -36,7 +37,9 @@ export async function getAdditionalInfoByUserId(userID: string) {
 
 export async function insertAdditionalInfo(userAdditionalInfo: AdditionalInfo) {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
+
     if (!connection) {
       throw new Error("Database connection pool is undefined");
     }
@@ -64,7 +67,8 @@ export async function insertAdditionalInfo(userAdditionalInfo: AdditionalInfo) {
 
 export async function updateAdditionalInfo(additionalInfo: AdditionalInfo) {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
     if (!connection) {
       throw new Error("Database connection pool is undefined");
     }

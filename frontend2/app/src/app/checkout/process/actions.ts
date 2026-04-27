@@ -1,5 +1,4 @@
 "use server";
-import { pool } from "@/lib/gcp/db";
 import {
   addToCart,
   updateMenuVariantQuantity,
@@ -8,6 +7,7 @@ import {
 interface response {
   ok: boolean;
 }
+import getPool from "@/lib/gcp/db";
 
 export async function removeFromCart(
   id: number,
@@ -19,7 +19,8 @@ export async function removeFromCart(
   modification_id: number | null,
 ) {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
     if (!connection) {
       throw new Error("Database connection pool is undefined");
     }
@@ -71,7 +72,8 @@ export async function removeFromCart(
 
 export async function makeOrder(cart_id: number, user_id: string) {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
 
     if (!connection) {
       throw new Error("Database connection pool is undefined");
@@ -90,7 +92,8 @@ export async function makeOrder(cart_id: number, user_id: string) {
 
 export async function getCartItems(cart_id: number) {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
 
     if (!connection) {
       throw new Error("Database connection pool is undefined");

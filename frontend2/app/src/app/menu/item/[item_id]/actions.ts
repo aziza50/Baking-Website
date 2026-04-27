@@ -1,6 +1,6 @@
 "use server";
 import { cookies } from "next/headers";
-import { pool } from "@/lib/gcp/db";
+import getPool from "@/lib/gcp/db";
 
 interface response {
   ok: boolean;
@@ -8,7 +8,8 @@ interface response {
 
 export async function getVariant() {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
 
     if (!connection) {
       throw new Error("Database connection pool is undefined");
@@ -30,7 +31,8 @@ export async function getVariant() {
 
 export async function getVariantByItemId(menuId: number) {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
 
     if (!connection) {
       throw new Error("Database connection pool is undefined");
@@ -52,7 +54,8 @@ export async function getVariantByItemId(menuId: number) {
 }
 
 export async function getMenuItemById(menuId: number) {
-  const connection = await pool;
+  const pool = await getPool();
+  const connection = await pool.getConnection();
 
   if (!connection) {
     throw new Error("Database connection pool is undefined");
@@ -75,7 +78,8 @@ export async function getMenuItemById(menuId: number) {
 }
 
 export async function getToppingsByMenuId(menuId: number) {
-  const connection = await pool;
+  const pool = await getPool();
+  const connection = await pool.getConnection();
 
   if (!connection) {
     throw new Error("Database connection pool is undefined");
@@ -98,7 +102,8 @@ export async function getToppingsByMenuId(menuId: number) {
 }
 
 export async function getModificationsByMenuId(menuId: number) {
-  const connection = await pool;
+  const pool = await getPool();
+  const connection = await pool.getConnection();
 
   if (!connection) {
     throw new Error("Database connection pool is undefined");
@@ -121,7 +126,8 @@ export async function getModificationsByMenuId(menuId: number) {
 }
 
 export async function getIngredientsByVariantId(variantId: number) {
-  const connection = await pool;
+  const pool = await getPool();
+  const connection = await pool.getConnection();
 
   if (!connection) {
     throw new Error("Database connection pool is undefined");
@@ -162,7 +168,8 @@ export async function itemExistsInCart(
   modification_id: number | null,
 ) {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
 
     if (!connection) {
       throw new Error("Database connection pool is undefined");
@@ -185,7 +192,8 @@ export async function itemExistsInCart(
 
 export async function getQuantityVariantId(variantId: number, menuId: number) {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
 
     if (!connection) {
       throw new Error("Database connection pool is undefined");
@@ -213,7 +221,8 @@ export async function updateMenuVariantQuantity(
   subtract: boolean,
 ) {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
 
     if (!connection) {
       throw new Error("Database connection pool is undefined");
@@ -259,7 +268,8 @@ export async function addToCart(
   quantity: number,
 ) {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
 
     if (!connection) {
       throw new Error("Database connection pool is undefined");
@@ -335,7 +345,8 @@ export async function addToCart(
 
 export async function createCartId() {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
 
     if (!connection) {
       throw new Error("Database connection pool is undefined");
@@ -391,7 +402,8 @@ export async function getCardId() {
 
 export async function getCartQuantity(cart_id: number) {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
 
     if (!connection) {
       throw new Error("Database connection pool is undefined");

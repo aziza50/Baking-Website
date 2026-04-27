@@ -1,5 +1,5 @@
 "use server";
-import { pool } from "@/lib/gcp/db";
+import getPool from "@/lib/gcp/db";
 import { createClient } from "@/lib/supabase/server";
 
 interface UserRecord {
@@ -18,12 +18,13 @@ export async function addUser(userInfo: { id: string; email: string }) {
     throw new Error("Invalid user information provided");
   }
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
     if (!connection) {
       throw new Error("Database connection pool is undefined");
     }
     const [rows] = await connection.query(
-      "INSERT INTO users (id, email, created_at) VALUES (UUID_TO_BIN(?), ?, NOW())",
+      "INSERT INTO users (id, email, created_at) VALUES (UUID_TO_BIN(?), ?, NOW()) ON DUPLICATE KEY UPDATE email = VALUES(email)",
       [userInfo.id, userInfo.email],
     );
     return { ok: true };
@@ -36,7 +37,8 @@ export async function addUser(userInfo: { id: string; email: string }) {
 /* Retrieve a user by their ID - need for authentication purposes*/
 export async function getUserById(userId: string): Promise<UserRecord | null> {
   try {
-    const connection = await pool;
+    const pool = await getPool();
+    const connection = await pool.getConnection();
     if (!connection) {
       throw new Error("Database connection pool is undefined");
     }

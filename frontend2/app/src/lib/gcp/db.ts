@@ -1,16 +1,48 @@
-const mysql = require("mysql2/promise");
+import { Connector, IpAddressTypes } from "@google-cloud/cloud-sql-connector";
+import mysql from "mysql2/promise";
 
-export const pool = mysql.createConnection({
-  host: process.env.NEXT_DB_HOST,
-  port: process.env.NEXT_DB_PORT,
-  user: process.env.NEXT_DB_USER,
-  password: process.env.NEXT_DB_PASSWORD,
-  database: process.env.NEXT_DB_NAME,
-  enableCleartextPlugin: true,
-  ssl: false,
-  connectionLimit: 10,
-  waitForConnections: true,
-  queueLimit: 0,
-});
+let pool: any = null;
 
-export default pool;
+async function getPool(): Promise<any> {
+  if (pool) {
+    return pool;
+  }
+
+  const instanceConnectionName =
+    process.env.INSTANCE_CONNECTION_NAME || process.env.NEXT_DB_CONNECTION_NAME;
+
+  if (instanceConnectionName) {
+    const connector = new Connector();
+
+    const clientOptions = await connector.getOptions({
+      instanceConnectionName,
+      ipType: IpAddressTypes.PUBLIC,
+    });
+
+    pool = mysql.createPool({
+      connectionLimit: 5,
+      waitForConnections: true,
+      queueLimit: 0,
+      user: process.env.NEXT_DB_USER,
+      password: process.env.NEXT_DB_PASSWORD,
+      database: process.env.NEXT_DB_NAME,
+      ...clientOptions,
+    });
+  } else {
+    pool = mysql.createPool({
+      host: process.env.NEXT_DB_HOST || "localhost",
+      port: parseInt(process.env.NEXT_DB_PORT || "3306"),
+      user: process.env.NEXT_DB_USER,
+      password: process.env.NEXT_DB_PASSWORD,
+      database: process.env.NEXT_DB_NAME,
+      enableCleartextPlugin: true,
+      connectionLimit: 10,
+      waitForConnections: true,
+      queueLimit: 0,
+    });
+  }
+
+  return pool;
+}
+
+export default getPool;
