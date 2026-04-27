@@ -111,6 +111,13 @@ const Page = () => {
     });
     const phone_number = formData.get("phone_number") as string;
     const display_name = formData.get("display_name") as string;
+
+    const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
+
+    if (!phoneRegex.test(phone_number)) {
+      alert("Please enter a valid phone number in XXX-XXX-XXXX format.");
+      return; // Stop the function here
+    } else {
     console.log(additionalInfo);
     if (additionalInfo) {
       const updatedInfo: AdditionalInfo = {
@@ -157,7 +164,7 @@ const Page = () => {
       } catch (error) {
         console.error("Error adding additional info:", error);
       }
-    }
+    }}
   };
 
   return (
@@ -248,7 +255,7 @@ const Page = () => {
                       <Input
                         id="phone-number"
                         name="phone_number"
-                        defaultValue="1234567890"
+                        defaultValue="123-456-7890"
                         type="tel"
                       />
                     </Field>
