@@ -139,6 +139,7 @@ const Page = () => {
         }
       } else {
         const newAdditionalInfo = {
+          id: 0,
           user_id: String(user?.id || ""),
           display_name: String(display_name || ""),
           allergies: String(parsedAllergies.slice(0, -1)),
