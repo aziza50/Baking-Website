@@ -377,3 +377,33 @@ export async function getOrCreateCartId() {
 
   return newId;
 }
+
+export async function getCardId() {
+  const store = await cookies();
+  const existing = store.get("cart_id")?.value;
+
+  if (existing) {
+    const id = Number(existing);
+    if (!Number.isNaN(id)) return id;
+  }
+  return existing ? Number(existing) : null;
+}
+
+export async function getCartQuantity(cart_id: number) {
+  try {
+    const connection = await pool;
+
+    if (!connection) {
+      throw new Error("Database connection pool is undefined");
+    }
+
+    const [rows] = await connection.query(
+      "SELECT SUM(quantity) as total_quantity FROM holds WHERE cart_id = ?",
+      [cart_id],
+    );
+    return { ok: true, data: rows[0].total_quantity || 0 };
+  } catch (error) {
+    console.error("Error fetching cart quantity:", error);
+    return { ok: false, data: null };
+  }
+}
